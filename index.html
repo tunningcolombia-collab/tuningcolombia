@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tuning Colombia — Accesorios · Audio · Video · Instalación</title>
+<meta name="description" content="Tuning Colombia: accesorios para autos, música y video para USB, servicios de instalación, páginas web con IA y chatbots. Colombia 🇨🇴">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --mag: #e8009a;
+    --mag2: #ff00cc;
+    --mag-dim: #a0006b;
+    --chrome: #c8c8d4;
+    --chrome2: #e8e8f0;
+    --dark: #0a0a0c;
+    --dark2: #111116;
+    --dark3: #1a1a22;
+    --dark4: #222230;
+    --text: #f0f0f8;
+    --text2: #a0a0b8;
+    --border: rgba(232,0,154,0.18);
+    --glow: 0 0 40px rgba(232,0,154,0.25);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--dark);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--dark2); }
+  ::-webkit-scrollbar-thumb { background: var(--mag); border-radius: 2px; }
+
+  /* NOISE TEXTURE */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  /* ─── POPUP ─── */
+  #popup-overlay {
+    position: fixed; inset: 0; z-index: 999;
+    background: rgba(0,0,0,0.82);
+    backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; animation: fadeIn 0.5s forwards;
+  }
+  #popup-box {
+    background: var(--dark3);
+    border: 1px solid var(--mag);
+    border-radius: 16px;
+    max-width: 480px; width: 92%;
+    position: relative;
+    box-shadow: 0 0 60px rgba(232,0,154,0.35);
+    overflow: hidden;
+  }
+  /* modo texto */
+  #popup-box.mode-text { padding: 2rem 2.5rem; text-align: center; }
+  #popup-box .pop-tag {
+    display: inline-block;
+    background: var(--mag); color: #fff;
+    font-family: 'Rajdhani', sans-serif; font-weight: 700;
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    padding: 4px 14px; border-radius: 20px; margin-bottom: 1rem;
+  }
+  #popup-box h2 {
+    font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem;
+    letter-spacing: 2px; color: #fff; margin-bottom: 0.5rem; line-height: 1.1;
+  }
+  #popup-box .pop-body-text {
+    color: var(--text2); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.6;
+  }
+  #popup-box .pop-btn {
+    display: inline-block; background: var(--mag); color: #fff;
+    text-decoration: none; font-family: 'Rajdhani', sans-serif; font-weight: 700;
+    font-size: 1rem; letter-spacing: 1px; padding: 14px 32px;
+    border-radius: 8px; transition: all 0.2s; border: none; cursor: pointer;
+    margin-top: 1.4rem;
+  }
+  #popup-box .pop-btn:hover { background: var(--mag2); transform: scale(1.03); }
+  /* modo imagen */
+  #popup-box.mode-image { padding: 0; }
+  #popup-box.mode-image img#pop-img {
+    width: 100%; max-height: 520px; object-fit: cover;
+    border-radius: 15px; display: block;
+  }
+  /* modo video */
+  #popup-box.mode-video { padding: 0; }
+  #popup-box.mode-video #pop-video-wrap {
+    position: relative; padding-top: 56.25%; width: 100%;
+  }
+  #popup-box.mode-video #pop-video-wrap iframe,
+  #popup-box.mode-video #pop-video-wrap video {
+    position: absolute; inset: 0; width: 100%; height: 100%; border: none;
+  }
+  #popup-close {
+    position: absolute; top: 10px; right: 14px; z-index: 10;
+    background: rgba(0,0,0,0.6); border: 1px solid rgba(232,0,154,0.4);
+    color: #fff; font-size: 1.1rem; cursor: pointer;
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  #popup-close:hover { background: var(--mag); border-color: var(--mag); }
+
+    font-size: 0.82rem; color: var(--mag); margin-top: 1rem;
+    font-family: 'Rajdhani', sans-serif; letter-spacing: 1px;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 0 2rem;
+    height: 68px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(10,10,12,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 3px;
+    color: #fff;
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--mag); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text2);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--mag); }
+  .nav-cta {
+    background: var(--mag);
+    color: #fff !important;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-family: 'Rajdhani', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    letter-spacing: 1px !important;
+    text-decoration: none;
+    transition: all 0.2s !important;
+  }
+  .nav-cta:hover { background: var(--mag2) !important; transform: scale(1.04); }
+  .nav-hamburger { display: none; background: none; border: none; color: var(--text); font-size: 1.5rem; cursor: pointer; }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 100px 2rem 4rem;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 70% 50%, rgba(232,0,154,0.1) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 20% 80%, rgba(100,0,200,0.08) 0%, transparent 60%),
+      var(--dark);
+  }
+  .hero-grid {
+    position: absolute; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(232,0,154,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232,0,154,0.05) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  }
+  .hero-content {
+    position: relative; z-index: 1;
+    max-width: 1100px; width: 100%;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 4rem; align-items: center;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid var(--border);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--mag);
+    margin-bottom: 1.5rem;
+  }
+  .hero-badge::before {
+    content: '';
+    width: 7px; height: 7px;
+    background: var(--mag);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    line-height: 0.95;
+    letter-spacing: 3px;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 em { color: var(--mag); font-style: normal; }
+  .hero-sub {
+    color: var(--text2);
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+    max-width: 440px;
+  }
+  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--mag);
+    color: #fff;
+    padding: 14px 32px;
+    border-radius: 8px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    text-decoration: none;
+    border: none; cursor: pointer;
+    transition: all 0.2s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--mag2); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(232,0,154,0.4); }
+  .btn-outline {
+    background: transparent;
+    color: var(--text);
+    padding: 14px 32px;
+    border-radius: 8px;
+    border: 1px solid rgba(232,0,154,0.4);
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-block;
+  }
+  .btn-outline:hover { border-color: var(--mag); color: var(--mag); transform: translateY(-2px); }
+  .hero-stats {
+    display: flex; gap: 2.5rem;
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+  .hero-stat .num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    color: var(--mag);
+    display: block;
+  }
+  .hero-stat .lbl {
+    font-size: 0.75rem;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+  }
+  .hero-visual {
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hero-card-stack {
+    position: relative;
+    width: 340px; height: 340px;
+  }
+  .hero-card {
+    position: absolute;
+    background: var(--dark3);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.4s;
+  }
+  .hero-card.c1 {
+    width: 280px; height: 200px;
+    top: 20px; left: 30px;
+    border-color: rgba(232,0,154,0.4);
+    box-shadow: 0 0 40px rgba(232,0,154,0.15);
+  }
+  .hero-card.c2 {
+    width: 240px; height: 170px;
+    top: 140px; left: 60px;
+    background: var(--dark4);
+    z-index: 2;
+  }
+  .hero-card.c3 {
+    width: 200px; height: 140px;
+    top: 240px; left: 100px;
+    background: linear-gradient(135deg, var(--dark3), rgba(232,0,154,0.1));
+    z-index: 3;
+    border-color: var(--mag);
+  }
+  .card-inner {
+    padding: 1.2rem;
+    height: 100%;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .card-tag {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--mag);
+    font-weight: 700;
+  }
+  .card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 2px;
+    color: var(--chrome2);
+  }
+  .card-line {
+    height: 2px;
+    background: linear-gradient(90deg, var(--mag), transparent);
+    width: 60px;
+    border-radius: 1px;
+  }
+
+  /* ─── SECTION BASE ─── */
+  section { padding: 5rem 2rem; position: relative; z-index: 1; }
+  .section-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--mag);
+    margin-bottom: 0.8rem;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    letter-spacing: 2px;
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+  .section-sub {
+    color: var(--text2);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    max-width: 540px;
+    margin-bottom: 3rem;
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--mag), transparent);
+    margin: 0;
+    opacity: 0.3;
+  }
+
+  /* ─── SERVICIOS ─── */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+  .service-card {
+    background: var(--dark3);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2rem 1.5rem;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .service-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--mag), transparent);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+  }
+  .service-card:hover { border-color: rgba(232,0,154,0.4); transform: translateY(-4px); box-shadow: var(--glow); }
+  .service-card:hover::before { transform: scaleX(1); }
+  .service-icon {
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+  .service-card h3 {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--chrome2);
+    margin-bottom: 0.6rem;
+  }
+  .service-card p {
+    color: var(--text2);
+    font-size: 0.88rem;
+    line-height: 1.6;
+  }
+
+  /* ─── TIENDA PREVIEW ─── */
+  .store-section { background: var(--dark2); }
+  .cats-row {
+    display: flex; gap: 0.8rem; flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+  .cat-btn {
+    background: var(--dark4);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .cat-btn:hover, .cat-btn.active {
+    background: var(--mag);
+    color: #fff;
+    border-color: var(--mag);
+  }
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.2rem;
+  }
+  .product-card {
+    background: var(--dark3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  .product-card:hover { transform: translateY(-4px); border-color: rgba(232,0,154,0.5); box-shadow: var(--glow); }
+  .product-img {
+    width: 100%; aspect-ratio: 1;
+    background: var(--dark4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .product-img::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 60%, rgba(232,0,154,0.1));
+  }
+  .product-info { padding: 1rem; }
+  .product-cat {
+    font-size: 0.7rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--mag);
+    margin-bottom: 4px;
+  }
+  .product-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--chrome2);
+    margin-bottom: 8px;
+  }
+  .product-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    color: var(--mag);
+  }
+
+  /* ─── DESCARGAS ─── */
+  .downloads-section { background: var(--dark); }
+  .downloads-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+  .download-card {
+    background: var(--dark3);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    display: flex; gap: 1rem; align-items: flex-start;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .download-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--mag), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .download-card:hover { border-color: rgba(232,0,154,0.5); transform: translateY(-3px); }
+  .download-card:hover::after { opacity: 1; }
+  .dl-icon {
+    width: 56px; height: 56px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--dark4), rgba(232,0,154,0.15));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem;
+    border: 1px solid var(--border);
+  }
+  .dl-info { flex: 1; }
+  .dl-type {
+    font-size: 0.7rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--mag);
+    margin-bottom: 4px;
+  }
+  .dl-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--chrome2);
+    margin-bottom: 4px;
+  }
+  .dl-desc {
+    font-size: 0.8rem;
+    color: var(--text2);
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+  .dl-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--mag);
+    color: #fff;
+    padding: 7px 16px;
+    border-radius: 6px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    letter-spacing: 1px;
+    text-decoration: none;
+    border: none; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .dl-btn:hover { background: var(--mag2); }
+
+  /* ─── WEB + IA ─── */
+  .ia-section {
+    background: var(--dark2);
+    position: relative; overflow: hidden;
+  }
+  .ia-bg-circle {
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(232,0,154,0.07) 0%, transparent 70%);
+    top: -200px; right: -200px;
+    pointer-events: none;
+  }
+  .ia-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+  .ia-features { display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem; }
+  .ia-feat {
+    display: flex; gap: 1rem; align-items: flex-start;
+    padding: 1rem 1.2rem;
+    background: var(--dark3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: all 0.3s;
+  }
+  .ia-feat:hover { border-color: rgba(232,0,154,0.4); }
+  .ia-feat-icon {
+    font-size: 1.5rem; flex-shrink: 0;
+    width: 44px; height: 44px;
+    background: rgba(232,0,154,0.1);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ia-feat h4 {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--chrome2);
+    margin-bottom: 4px;
+  }
+  .ia-feat p { font-size: 0.85rem; color: var(--text2); line-height: 1.5; }
+  .terminal {
+    background: #0d0d14;
+    border: 1px solid rgba(232,0,154,0.3);
+    border-radius: 14px;
+    overflow: hidden;
+    font-family: 'Space Grotesk', monospace;
+  }
+  .terminal-bar {
+    background: var(--dark3);
+    padding: 10px 16px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .t-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .t-dot.r { background: #ff5f57; }
+  .t-dot.y { background: #ffbd2e; }
+  .t-dot.g { background: #28c840; }
+  .terminal-body { padding: 1.5rem; font-size: 0.85rem; line-height: 2; }
+  .t-line { display: block; }
+  .t-prompt { color: var(--mag); }
+  .t-cmd { color: var(--chrome2); }
+  .t-out { color: #00e5a0; }
+  .t-comment { color: #555; }
+  .t-cursor {
+    display: inline-block; width: 8px; height: 16px;
+    background: var(--mag); vertical-align: middle;
+    animation: blink 1s step-end infinite;
+  }
+
+  /* ─── CONTACTO ─── */
+  .contact-section { background: var(--dark); }
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+  .contact-info { display: flex; flex-direction: column; gap: 1.5rem; }
+  .contact-item {
+    display: flex; gap: 1rem; align-items: flex-start;
+    padding: 1.2rem;
+    background: var(--dark3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: all 0.3s;
+  }
+  .contact-item:hover { border-color: rgba(232,0,154,0.4); }
+  .ci-icon {
+    font-size: 1.4rem; flex-shrink: 0;
+    width: 44px; height: 44px;
+    background: rgba(232,0,154,0.1);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ci-label {
+    font-size: 0.75rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--mag);
+    margin-bottom: 3px;
+  }
+  .ci-value { font-size: 0.95rem; color: var(--chrome2); }
+  .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+  .contact-form input,
+  .contact-form textarea {
+    background: var(--dark3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  .contact-form input:focus,
+  .contact-form textarea:focus { border-color: var(--mag); }
+  .contact-form textarea { height: 120px; resize: none; }
+  .contact-form input::placeholder,
+  .contact-form textarea::placeholder { color: var(--text2); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--dark2);
+    border-top: 1px solid var(--border);
+    padding: 3rem 2rem;
+  }
+  .footer-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 2rem;
+  }
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 3px;
+    margin-bottom: 0.8rem;
+  }
+  .footer-logo span { color: var(--mag); }
+  .footer-desc { color: var(--text2); font-size: 0.85rem; line-height: 1.7; }
+  .footer-col h4 {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--chrome2);
+    margin-bottom: 1rem;
+  }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+  .footer-col ul a {
+    color: var(--text2); text-decoration: none;
+    font-size: 0.85rem; transition: color 0.2s;
+  }
+  .footer-col ul a:hover { color: var(--mag); }
+  .footer-bottom {
+    max-width: 1100px; margin: 2rem auto 0;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-bottom p { color: var(--text2); font-size: 0.8rem; }
+  .footer-bottom span { color: var(--mag); }
+  .social-row { display: flex; gap: 0.8rem; }
+  .social-btn {
+    width: 36px; height: 36px;
+    background: var(--dark3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text2); text-decoration: none;
+    font-size: 1rem; transition: all 0.2s;
+  }
+  .social-btn:hover { background: var(--mag); border-color: var(--mag); color: #fff; }
+
+  /* ─── WHATSAPP FLOAT ─── */
+  .wa-float {
+    position: fixed;
+    bottom: 28px; right: 28px; z-index: 200;
+    width: 58px; height: 58px;
+    background: #25D366;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none;
+    box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+    transition: all 0.2s;
+    animation: waIn 1s 3s both;
+  }
+  .wa-float:hover { transform: scale(1.1); box-shadow: 0 6px 30px rgba(37,211,102,0.6); }
+  .wa-float svg { width: 30px; height: 30px; fill: #fff; }
+  .wa-pulse {
+    position: absolute;
+    width: 100%; height: 100%;
+    background: #25D366;
+    border-radius: 50%;
+    animation: waPulse 2s infinite;
+    z-index: -1;
+  }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeIn { to { opacity: 1; } }
+  @keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.4; transform:scale(0.7); } }
+  @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
+  @keyframes waPulse { 0% { transform:scale(1); opacity:0.5; } 100% { transform:scale(1.8); opacity:0; } }
+  @keyframes waIn { from { opacity:0; transform:scale(0); } to { opacity:1; transform:scale(1); } }
+  @keyframes float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-12px); } }
+  .hero-card.c1 { animation: float 6s ease-in-out infinite; }
+  .hero-card.c2 { animation: float 6s ease-in-out 1s infinite; }
+  .hero-card.c3 { animation: float 6s ease-in-out 2s infinite; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    .hero-content, .ia-grid, .contact-grid { grid-template-columns: 1fr; }
+    .hero-visual { display: none; }
+    .footer-inner { grid-template-columns: 1fr 1fr; }
+    .nav-links { display: none; }
+    .nav-hamburger { display: block; }
+  }
+  @media (max-width: 600px) {
+    .footer-inner { grid-template-columns: 1fr; }
+    .footer-bottom { flex-direction: column; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- POPUP (contenido renderizado por JS desde localStorage) -->
+<div id="popup-overlay" style="display:none;">
+  <div id="popup-box" class="mode-text">
+    <button id="popup-close" onclick="closePopup()">✕</button>
+    <div id="popup-inner"></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">TUNING<span>COLOMBIA</span></a>
+  <ul class="nav-links">
+    <li><a href="#servicios">Servicios</a></li>
+    <li><a href="#tienda">Tienda</a></li>
+    <li><a href="#descargas">Descargas</a></li>
+    <li><a href="#ia">Web & IA</a></li>
+    <li><a href="#contacto" class="nav-cta">Contactar</a></li>
+  </ul>
+  <button class="nav-hamburger" onclick="toggleMenu()">☰</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div>
+      <div class="hero-badge">🇨🇴 Tuning Colombia — Est. 2010</div>
+      <h1>ELEVA<br>TU <em>AUTO</em><br>AL LÍMITE</h1>
+      <p class="hero-sub">Accesorios premium, audio y video para USB, instalación profesional, páginas web con IA y chatbots. Todo en un solo lugar.</p>
+      <div class="hero-btns">
+        <a href="#tienda" class="btn-primary">🛍️ Ver tienda</a>
+        <a href="#contacto" class="btn-outline">📞 Contáctanos</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><span class="num">500+</span><span class="lbl">Clientes</span></div>
+        <div class="hero-stat"><span class="num">10+</span><span class="lbl">Años</span></div>
+        <div class="hero-stat"><span class="num">24/7</span><span class="lbl">Online</span></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card-stack">
+        <div class="hero-card c1">
+          <div class="card-inner">
+            <div>
+              <div class="card-tag">⚡ Interior</div>
+              <div class="card-title">Accesorios Premium</div>
+            </div>
+            <div class="card-line"></div>
+          </div>
+        </div>
+        <div class="hero-card c2">
+          <div class="card-inner">
+            <div>
+              <div class="card-tag">🎵 Audio & Video</div>
+              <div class="card-title">USB · HD ·4K</div>
+            </div>
+            <div class="card-line"></div>
+          </div>
+        </div>
+        <div class="hero-card c3">
+          <div class="card-inner">
+            <div>
+              <div class="card-tag">🤖 IA & Web</div>
+              <div class="card-title">Chatbots · Páginas</div>
+            </div>
+            <div class="card-line"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SERVICIOS -->
+<section id="servicios">
+  <div class="container">
+    <div class="section-label">Nuestros servicios</div>
+    <h2 class="section-title">TODO LO QUE<br>NECESITAS</h2>
+    <p class="section-sub">Desde accesorios para tu auto hasta soluciones digitales de última generación.</p>
+    <div class="services-grid">
+      <div class="service-card">
+        <span class="service-icon">🚗</span>
+        <h3>Accesorios Exteriores</h3>
+        <p>Spoilers, luces LED, rines, llantas, kits de carrocería, vinilos y todo para el exterior de tu auto.</p>
+      </div>
+      <div class="service-card">
+        <span class="service-icon">💺</span>
+        <h3>Accesorios Interiores</h3>
+        <p>Tapicería, pantallas, cámaras de reversa, kits de luces, ambientadores y accesorios de confort.</p>
+      </div>
+      <div class="service-card">
+        <span class="service-icon">🎵</span>
+        <h3>Audio & Video USB</h3>
+        <p>Venta de USBs con música colombiana, electrónica, vallenato, reggaetón y videos en HD/4K.</p>
+      </div>
+      <div class="service-card">
+        <span class="service-icon">🔧</span>
+        <h3>Instalación Profesional</h3>
+        <p>Instalamos todo lo que vendes. Equipos de audio, pantallas, cámaras, luces y más.</p>
+      </div>
+      <div class="service-card">
+        <span class="service-icon">🌐</span>
+        <h3>Páginas Web con IA</h3>
+        <p>Desarrollamos tu sitio web moderno, administrable y optimizado con inteligencia artificial.</p>
+      </div>
+      <div class="service-card">
+        <span class="service-icon">🤖</span>
+        <h3>Chatbots Inteligentes</h3>
+        <p>Automatiza tu atención en WhatsApp con IA. Responde 24/7, vende y gestiona clientes solo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TIENDA -->
+<section id="tienda" class="store-section">
+  <div class="container">
+    <div class="section-label">Tienda online</div>
+    <h2 class="section-title">ACCESORIOS<br>PARA TU AUTO</h2>
+    <p class="section-sub">Productos de calidad para personalizar y potenciar tu vehículo.</p>
+    <div class="cats-row" id="cats-row">
+      <button class="cat-btn active" onclick="filterCat('todos',this)">Todos</button>
+      <button class="cat-btn" onclick="filterCat('exterior',this)">🚗 Exterior</button>
+      <button class="cat-btn" onclick="filterCat('interior',this)">💺 Interior</button>
+      <button class="cat-btn" onclick="filterCat('audio',this)">🔊 Audio</button>
+      <button class="cat-btn" onclick="filterCat('luces',this)">💡 Luces</button>
+      <button class="cat-btn" onclick="filterCat('llantas',this)">⚙️ Rines</button>
+    </div>
+    <div class="products-grid" id="products-grid">
+      <!-- productos generados por JS -->
+    </div>
+    <div style="text-align:center;margin-top:2.5rem;">
+      <a href="tienda.html" class="btn-primary">Ver todos los productos →</a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DESCARGAS -->
+<section id="descargas" class="downloads-section">
+  <div class="container">
+    <div class="section-label">Descargas digitales</div>
+    <h2 class="section-title">MÚSICA & VIDEO<br>PARA TU USB</h2>
+    <p class="section-sub">Descarga la mejor música colombiana y videos HD/4K para tus viajes. Compra y descarga al instante.</p>
+    <div class="downloads-grid" id="downloads-grid">
+      <!-- generados por JS -->
+    </div>
+    <div style="text-align:center;margin-top:2.5rem;">
+      <a href="descargas.html" class="btn-outline">Ver todas las descargas →</a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- WEB & IA -->
+<section id="ia" class="ia-section">
+  <div class="ia-bg-circle"></div>
+  <div class="container ia-grid">
+    <div>
+      <div class="section-label">Tecnología & Soluciones</div>
+      <h2 class="section-title">PÁGINAS WEB<br>CON <em style="color:var(--mag);font-style:normal;">IA</em></h2>
+      <p class="section-sub">Creamos sitios web modernos y chatbots inteligentes para tu negocio. 100% administrables, sin saber programar.</p>
+      <div class="ia-features">
+        <div class="ia-feat">
+          <div class="ia-feat-icon">🤖</div>
+          <div>
+            <h4>Chatbot WhatsApp + IA</h4>
+            <p>Bot inteligente que responde, vende y gestiona clientes 24/7 en tu WhatsApp.</p>
+          </div>
+        </div>
+        <div class="ia-feat">
+          <div class="ia-feat-icon">🌐</div>
+          <div>
+            <h4>Sitios web administrables</h4>
+            <p>Panel admin propio. Cambias textos, fotos, precios y contenido sin tocar código.</p>
+          </div>
+        </div>
+        <div class="ia-feat">
+          <div class="ia-feat-icon">⚡</div>
+          <div>
+            <h4>Sin pagos mensuales</h4>
+            <p>Tu sitio es tuyo. Sin suscripciones ni dependencia de plataformas externas.</p>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:2rem;">
+        <a href="#contacto" class="btn-primary">Pedir cotización →</a>
+      </div>
+    </div>
+    <div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="t-dot r"></div>
+          <div class="t-dot y"></div>
+          <div class="t-dot g"></div>
+          <span style="font-size:0.75rem;color:#555;margin-left:8px;font-family:'Rajdhani',sans-serif;letter-spacing:1px;">tu-negocio.com — panel admin</span>
+        </div>
+        <div class="terminal-body">
+          <span class="t-line"><span class="t-prompt">admin@tuning</span><span class="t-cmd"> ~$</span> <span class="t-comment"># Tu sitio listo</span></span>
+          <span class="t-line"><span class="t-prompt">✓</span> <span class="t-out">Panel admin instalado</span></span>
+          <span class="t-line"><span class="t-prompt">✓</span> <span class="t-out">Chatbot IA conectado</span></span>
+          <span class="t-line"><span class="t-prompt">✓</span> <span class="t-out">Tienda configurada</span></span>
+          <span class="t-line"><span class="t-prompt">✓</span> <span class="t-out">Popup editable activo</span></span>
+          <span class="t-line"><span class="t-prompt">✓</span> <span class="t-out">Descargas digitales ON</span></span>
+          <span class="t-line"><span class="t-prompt">✓</span> <span class="t-out">Sin pago mensual 🎉</span></span>
+          <span class="t-line">&nbsp;</span>
+          <span class="t-line"><span class="t-prompt">admin@tuning</span><span class="t-cmd"> ~$</span> <span class="t-cursor"></span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONTACTO -->
+<section id="contacto" class="contact-section">
+  <div class="container">
+    <div class="section-label">Hablemos</div>
+    <h2 class="section-title">CONTÁCTANOS</h2>
+    <p class="section-sub">¿Tienes preguntas sobre algún producto o servicio? Escríbenos, respondemos rápido.</p>
+    <div class="contact-grid">
+      <div class="contact-info">
+        <div class="contact-item">
+          <div class="ci-icon">📱</div>
+          <div>
+            <div class="ci-label">WhatsApp</div>
+            <div class="ci-value">+57 300 000 0000</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="ci-icon">📧</div>
+          <div>
+            <div class="ci-label">Email</div>
+            <div class="ci-value">info@tuningcolombia.com</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="ci-icon">📍</div>
+          <div>
+            <div class="ci-label">Ubicación</div>
+            <div class="ci-value">Colombia 🇨🇴 — Envíos a todo el país</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="ci-icon">🕐</div>
+          <div>
+            <div class="ci-label">Atención</div>
+            <div class="ci-value">Lun – Sáb: 8am – 7pm · Bot 24/7</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="contact-form">
+          <input type="text" placeholder="Tu nombre" id="cf-name">
+          <input type="tel" placeholder="WhatsApp o teléfono" id="cf-phone">
+          <input type="text" placeholder="¿En qué te podemos ayudar?" id="cf-subject">
+          <textarea placeholder="Cuéntanos más..." id="cf-msg"></textarea>
+          <button class="btn-primary" onclick="sendWA()">Enviar por WhatsApp ↗</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo">TUNING<span>COLOMBIA</span></div>
+      <p class="footer-desc">Accesorios para autos, audio y video, instalación profesional, páginas web con IA y chatbots. Todo para llevar tu auto y tu negocio al siguiente nivel.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Tienda</h4>
+      <ul>
+        <li><a href="#">Exterior</a></li>
+        <li><a href="#">Interior</a></li>
+        <li><a href="#">Audio</a></li>
+        <li><a href="#">Luces</a></li>
+        <li><a href="#">Rines</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Servicios</h4>
+      <ul>
+        <li><a href="#">Instalación</a></li>
+        <li><a href="#">Descargas USB</a></li>
+        <li><a href="#">Páginas Web</a></li>
+        <li><a href="#">Chatbots IA</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Empresa</h4>
+      <ul>
+        <li><a href="#">Nosotros</a></li>
+        <li><a href="#">Portafolio</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Contacto</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 <span>Tuning Colombia</span> — Todos los derechos reservados</p>
+    <div class="social-row">
+      <a class="social-btn" href="#" title="Instagram">📷</a>
+      <a class="social-btn" href="#" title="Facebook">👥</a>
+      <a class="social-btn" href="#" title="TikTok">🎵</a>
+      <a class="social-btn" href="#" title="YouTube">▶️</a>
+    </div>
+  </div>
+</footer>
+
+<!-- WA FLOAT -->
+<a class="wa-float" href="https://wa.me/573000000000" target="_blank" title="WhatsApp">
+  <div class="wa-pulse"></div>
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
+<script>
+// ── PRODUCTOS DEMO ──
+const products = [
+  { cat:'exterior', name:'Kit aerodinámica', price:'$280.000', icon:'🏎️' },
+  { cat:'exterior', name:'Vinilo carbono', price:'$95.000', icon:'🖤' },
+  { cat:'interior', name:'Luces ambientales RGB', price:'$120.000', icon:'🌈' },
+  { cat:'interior', name:'Tapete premium', price:'$75.000', icon:'💺' },
+  { cat:'audio',    name:'Subwoofer 12"', price:'$350.000', icon:'🔊' },
+  { cat:'audio',    name:'Pantalla táctil 9"', price:'$480.000', icon:'📺' },
+  { cat:'luces',    name:'Kit LED H4 6000K', price:'$85.000', icon:'💡' },
+  { cat:'luces',    name:'Luces DRL secuencial', price:'$140.000', icon:'✨' },
+  { cat:'llantas',  name:'Rines 17" deportivos', price:'$890.000', icon:'⚙️' },
+  { cat:'llantas',  name:'Tuercas de seguridad', price:'$45.000', icon:'🔩' },
+  { cat:'exterior', name:'Spoiler trasero', price:'$195.000', icon:'🚀' },
+  { cat:'interior', name:'Cámara de reversa HD', price:'$110.000', icon:'📷' },
+];
+
+function renderProducts(cat) {
+  const grid = document.getElementById('products-grid');
+  const filtered = cat === 'todos' ? products : products.filter(p => p.cat === cat);
+  grid.innerHTML = filtered.slice(0,8).map(p => `
+    <div class="product-card">
+      <div class="product-img">${p.icon}</div>
+      <div class="product-info">
+        <div class="product-cat">${p.cat}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-price">${p.price}</div>
+      </div>
+    </div>
+  `).join('');
+}
+renderProducts('todos');
+
+function filterCat(cat, btn) {
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderProducts(cat);
+}
+
+// ── DESCARGAS DEMO ──
+const downloads = [
+  { type:'🎵 Audio', name:'Pack Vallenato Premium', desc:'500 canciones HD. Los mejores éxitos para tu USB.', icon:'🎸' },
+  { type:'🎵 Audio', name:'Electrónica & Reggaetón', desc:'400 tracks del momento. Actualizado 2026.', icon:'🎧' },
+  { type:'🎥 Video', name:'Videos HD Colombia 2026', desc:'200 videos HD de artistas colombianos.', icon:'🎬' },
+  { type:'🎥 Video', name:'Mix Urbano 4K', desc:'Lo mejor del urbano en calidad 4K para pantalla.', icon:'📺' },
+];
+document.getElementById('downloads-grid').innerHTML = downloads.map(d => `
+  <div class="download-card">
+    <div class="dl-icon">${d.icon}</div>
+    <div class="dl-info">
+      <div class="dl-type">${d.type}</div>
+      <div class="dl-name">${d.name}</div>
+      <div class="dl-desc">${d.desc}</div>
+      <button class="dl-btn" onclick="alert('Redirigiendo al pago...')">💾 Descargar</button>
+    </div>
+  </div>
+`).join('');
+
+// ── POPUP 3 MODOS ──
+const POP_DEFAULT = {
+  active: true,
+  mode: 'text',
+  delay: 2500,
+  tag: '🔥 OFERTA ESPECIAL',
+  title: '¡20% OFF en toda la tienda!',
+  body: 'Solo por hoy. Accesorios de interior, exterior, audio y mucho más.',
+  btnText: 'Ver ofertas ahora →',
+  btnLink: '#tienda',
+  countdown: 600,
+  imgSrc: '',
+  videoUrl: '',
+  videoType: 'youtube'
+};
+
+function getPopConfig() {
+  try {
+    const saved = localStorage.getItem('tc_popup');
+    return saved ? Object.assign({}, POP_DEFAULT, JSON.parse(saved)) : POP_DEFAULT;
+  } catch(e) { return POP_DEFAULT; }
+}
+
+let popTimer, popInterval;
+function startPopup() {
+  const cfg = getPopConfig();
+  if (!cfg.active) return;
+  const overlay = document.getElementById('popup-overlay');
+  const box = document.getElementById('popup-box');
+  const inner = document.getElementById('popup-inner');
+  box.className = 'mode-' + cfg.mode;
+
+  if (cfg.mode === 'text') {
+    let cd = '';
+    if (cfg.countdown > 0) {
+      popTimer = cfg.countdown;
+      cd = `<canvas id="cd-canvas" width="300" height="130" style="display:block;margin:1rem auto 0;"></canvas>`;
+    }
+    // Build redirect URL
+    let redirHref = '#';
+    if (cfg.redirType === 'section') redirHref = cfg.redirSection || '#';
+    else if (cfg.redirType === 'url') redirHref = cfg.redirUrl || '#';
+    else if (cfg.redirType === 'sub') redirHref = cfg.redirSub ? 'https://' + cfg.redirSub : '#';
+    inner.innerHTML = `
+      <div class="pop-tag">${cfg.tag}</div>
+      <h2>${cfg.title}</h2>
+      <p class="pop-body-text">${cfg.body}</p>
+      ${cd}
+      <a href="${redirHref}" class="pop-btn" onclick="closePopup()" ${cfg.redirType!=='section'&&cfg.redirType!=='none'?'target="_blank"':''}>${cfg.btnText}</a>`;
+    if (cfg.countdown > 0) tickPopTimer();
+  } else if (cfg.mode === 'image') {
+    inner.innerHTML = `<img id="pop-img" src="${cfg.imgSrc}" alt="Popup">`;
+  } else if (cfg.mode === 'video') {
+    let vidHtml = '';
+    if (cfg.videoType === 'youtube') {
+      const vid = cfg.videoUrl.match(/(?:youtu\.be\/|v=|shorts\/)([A-Za-z0-9_-]{11})/);
+      const id = vid ? vid[1] : '';
+      vidHtml = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+    } else {
+      vidHtml = `<video src="${cfg.videoUrl}" autoplay muted loop playsinline controls></video>`;
+    }
+    inner.innerHTML = `<div id="pop-video-wrap">${vidHtml}</div>`;
+  }
+
+  overlay.style.display = 'flex';
+}
+
+function drawClock(canvas, secs) {
+  if (!canvas) return;
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = 300 * dpr; canvas.height = 130 * dpr;
+  canvas.style.width = '300px'; canvas.style.height = '130px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, 300, 130);
+  const h = Math.floor(secs/3600);
+  const m = Math.floor((secs%3600)/60);
+  const s = secs%60;
+  const units = [{val:h,lbl:'HRS',x:50},{val:m,lbl:'MIN',x:150},{val:s,lbl:'SEG',x:250}];
+  const MAG = '#e8009a';
+  units.forEach((u,i) => {
+    const cx = u.x, cy = 58, r = 44;
+    // outer track
+    ctx.beginPath(); ctx.arc(cx,cy,r+6,0,Math.PI*2);
+    ctx.strokeStyle='rgba(232,0,154,0.15)'; ctx.lineWidth=2; ctx.stroke();
+    // spinning arc
+    const now = Date.now()/1000;
+    const spd = i===2?2:i===1?1.5:1;
+    const dir = i===1?-1:1;
+    const start = dir*now*spd; const end = start + Math.PI*1.4;
+    ctx.beginPath(); ctx.arc(cx,cy,r+6,start,end);
+    const gArc = ctx.createLinearGradient(cx-r,cy,cx+r,cy);
+    gArc.addColorStop(0,'rgba(232,0,154,0)');
+    gArc.addColorStop(0.5,'rgba(232,0,154,1)');
+    gArc.addColorStop(1,'rgba(232,0,154,0.3)');
+    ctx.strokeStyle=gArc; ctx.lineWidth=2.5;
+    ctx.shadowColor=MAG; ctx.shadowBlur=8; ctx.stroke(); ctx.shadowBlur=0;
+    // glass circle bg
+    const gBg = ctx.createRadialGradient(cx-r*0.25,cy-r*0.25,2,cx,cy,r);
+    gBg.addColorStop(0,'rgba(255,255,255,0.22)');
+    gBg.addColorStop(0.4,'rgba(232,0,154,0.1)');
+    gBg.addColorStop(1,'rgba(8,4,16,0.92)');
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
+    ctx.fillStyle=gBg; ctx.fill();
+    // border
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
+    ctx.strokeStyle='rgba(232,0,154,0.5)'; ctx.lineWidth=1.5; ctx.stroke();
+    // glare
+    const gGlare = ctx.createRadialGradient(cx-10,cy-18,2,cx-10,cy-10,r*0.7);
+    gGlare.addColorStop(0,'rgba(255,255,255,0.28)');
+    gGlare.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
+    ctx.fillStyle=gGlare; ctx.fill();
+    // number
+    ctx.font = 'bold 32px "Bebas Neue",Arial';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.shadowColor=MAG; ctx.shadowBlur=18;
+    ctx.fillStyle='#ffffff'; ctx.fillText(String(u.val).padStart(2,'0'),cx,cy+2);
+    ctx.shadowBlur=0;
+    // badge
+    const bw=42, bh=16, bx=cx-bw/2, by=cy+r+10;
+    ctx.beginPath();
+    ctx.roundRect(bx,by,bw,bh,8);
+    ctx.fillStyle='rgba(232,0,154,0.18)'; ctx.fill();
+    ctx.strokeStyle='rgba(232,0,154,0.5)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.font='700 9px "Rajdhani",Arial';
+    ctx.fillStyle='rgba(232,0,154,1)'; ctx.fillText(u.lbl,cx,by+bh/2+1);
+    // separator
+    if(i<2){
+      ctx.font='bold 24px "Bebas Neue",Arial';
+      ctx.fillStyle=MAG; ctx.shadowColor=MAG; ctx.shadowBlur=12;
+      ctx.fillText(':',u.x+50,cy+2); ctx.shadowBlur=0;
+    }
+  });
+}
+
+let cdAnimFrame;
+function tickPopTimer() {
+  const cfg = getPopConfig();
+  popTimer = cfg.countdown;
+  let lastSec = -1;
+  function frame() {
+    const canvas = document.getElementById('cd-canvas');
+    if (!canvas) return;
+    drawClock(canvas, popTimer);
+    const thisSec = Math.floor(Date.now()/1000);
+    if (thisSec !== lastSec) { lastSec = thisSec; if(popTimer>0) popTimer--; }
+    if (popTimer > 0) {
+      cdAnimFrame = requestAnimationFrame(frame);
+    } else {
+      const r = cfg.redirType; let url='';
+      if(r==='section') url=cfg.redirSection;
+      else if(r==='url') url=cfg.redirUrl;
+      else if(r==='sub') url='https://'+cfg.redirSub;
+      if(url&&url!=='#') window.location.href=url;
+    }
+  }
+  cdAnimFrame = requestAnimationFrame(frame);
+}
+
+function closePopup() {
+  document.getElementById('popup-overlay').style.display = 'none';
+  clearInterval(popInterval);
+  if(typeof cdAnimFrame!=='undefined') cancelAnimationFrame(cdAnimFrame);
+}
+
+setTimeout(startPopup, getPopConfig().delay || 2500);
+document.getElementById('popup-overlay').addEventListener('click', function(e){
+  if (e.target === this) closePopup();
+});
+
+// ── CONTACTO ──
+function sendWA() {
+  const n = document.getElementById('cf-name').value;
+  const p = document.getElementById('cf-phone').value;
+  const s = document.getElementById('cf-subject').value;
+  const m = document.getElementById('cf-msg').value;
+  const msg = `Hola Tuning Colombia! 👋\nNombre: ${n}\nTeléfono: ${p}\nAsunto: ${s}\nMensaje: ${m}`;
+  window.open('https://wa.me/573000000000?text='+encodeURIComponent(msg), '_blank');
+}
+
+// ── NAV MOBILE ──
+function toggleMenu() {
+  const links = document.querySelector('.nav-links');
+  if(links.style.display==='flex'){
+    links.style.display='none';
+  } else {
+    links.style.cssText='display:flex;flex-direction:column;position:fixed;top:68px;left:0;right:0;background:#0a0a0c;padding:1.5rem 2rem;gap:1.2rem;border-bottom:1px solid rgba(232,0,154,0.2);';
+  }
+}
+
+// ── NAV SCROLL ──
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('nav');
+  nav.style.background = window.scrollY > 50
+    ? 'rgba(10,10,12,0.97)'
+    : 'rgba(10,10,12,0.85)';
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Popup — Tuning Colombia</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--mag:#e8009a;--mag2:#ff00cc;--dark:#0a0a0c;--dark2:#111116;--dark3:#1a1a22;--dark4:#222230;--text:#f0f0f8;--text2:#a0a0b8;--border:rgba(232,0,154,0.2);--green:#00e5a0;--red:#ff4466;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Space Grotesk',sans-serif;background:var(--dark);color:var(--text);min-height:100vh;}
+/* LOGIN */
+#login-screen{position:fixed;inset:0;z-index:9999;background:var(--dark);display:flex;align-items:center;justify-content:center;}
+.login-box{background:var(--dark3);border:1px solid var(--mag);border-radius:20px;padding:3rem 2.5rem;max-width:400px;width:92%;text-align:center;box-shadow:0 0 80px rgba(232,0,154,0.25);}
+.login-logo{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:4px;margin-bottom:0.3rem;}
+.login-logo span{color:var(--mag);}
+.login-sub{color:var(--text2);font-size:0.82rem;letter-spacing:2px;font-family:'Rajdhani',sans-serif;font-weight:600;text-transform:uppercase;margin-bottom:2rem;}
+.login-icon{font-size:2.5rem;margin-bottom:1.5rem;display:block;}
+.l-field{width:100%;background:var(--dark4);border:1px solid var(--border);border-radius:10px;padding:13px 16px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:0.95rem;outline:none;transition:border-color 0.2s;margin-bottom:1rem;}
+.l-field:focus{border-color:var(--mag);}
+.l-field::placeholder{color:#555;}
+.l-btn{width:100%;padding:14px;background:var(--mag);color:#fff;border:none;border-radius:10px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1.1rem;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;margin-top:0.5rem;}
+.l-btn:hover{background:var(--mag2);}
+.l-error{color:var(--red);font-size:0.85rem;font-family:'Rajdhani',sans-serif;font-weight:600;letter-spacing:1px;height:22px;margin-top:0.5rem;}
+.l-shake{animation:shake 0.4s;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+/* ADMIN */
+#admin-screen{display:none;}
+.admin-wrap{display:grid;grid-template-columns:1fr 1fr;min-height:100vh;}
+.panel-left{padding:2rem;border-right:1px solid var(--border);overflow-y:auto;}
+.panel-right{padding:2rem;background:var(--dark2);display:flex;flex-direction:column;align-items:center;gap:1rem;}
+.admin-header{display:flex;align-items:center;gap:1rem;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);}
+.admin-logo{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:3px;}
+.admin-logo span{color:var(--mag);}
+.header-actions{margin-left:auto;display:flex;gap:0.6rem;}
+.hbtn{background:var(--dark3);border:1px solid var(--border);color:var(--text2);padding:7px 14px;border-radius:8px;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:0.8rem;letter-spacing:1px;cursor:pointer;text-decoration:none;transition:all 0.2s;}
+.hbtn:hover{border-color:var(--mag);color:var(--mag);}
+.hbtn.logout{border-color:rgba(255,68,102,0.3);color:var(--red);}
+.hbtn.logout:hover{border-color:var(--red);}
+.sec-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:0.72rem;letter-spacing:3px;text-transform:uppercase;color:var(--mag);margin-bottom:0.8rem;}
+.sdiv{height:1px;background:var(--border);margin:1.5rem 0;}
+.toggle-row{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;padding:1rem 1.2rem;background:var(--dark3);border:1px solid var(--border);border-radius:10px;}
+.toggle-row label.tl{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:0.95rem;letter-spacing:1px;text-transform:uppercase;flex:1;}
+.switch{position:relative;width:48px;height:26px;flex-shrink:0;}
+.switch input{opacity:0;width:0;height:0;}
+.slider{position:absolute;inset:0;background:var(--dark4);border-radius:26px;cursor:pointer;transition:0.3s;border:1px solid var(--border);}
+.slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;bottom:3px;background:var(--text2);border-radius:50%;transition:0.3s;}
+input:checked+.slider{background:var(--mag);border-color:var(--mag);}
+input:checked+.slider::before{transform:translateX(22px);background:#fff;}
+.mode-tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.6rem;margin-bottom:1.5rem;}
+.mode-tab{padding:0.9rem 0.5rem;background:var(--dark3);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all 0.2s;}
+.mode-tab.active{background:rgba(232,0,154,0.12);border-color:var(--mag);}
+.mt-icon{font-size:1.4rem;display:block;margin-bottom:0.3rem;}
+.mt-label{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--text2);}
+.mode-tab.active .mt-label{color:var(--mag);}
+.form-group{margin-bottom:1.1rem;}
+.form-group>label{display:block;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:0.75rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--text2);margin-bottom:5px;}
+.form-group input,.form-group textarea,.form-group select{width:100%;background:var(--dark3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:0.9rem;outline:none;transition:border-color 0.2s;}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--mag);}
+.form-group textarea{height:76px;resize:none;}
+.form-group input::placeholder,.form-group textarea::placeholder{color:#555;}
+.form-group select option{background:var(--dark3);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.input-hint{font-size:0.75rem;color:#555;margin-top:4px;font-family:'Rajdhani',sans-serif;}
+.redir-tabs{display:flex;gap:0.5rem;margin-bottom:0.8rem;flex-wrap:wrap;}
+.rtab{padding:6px 14px;background:var(--dark3);border:1px solid var(--border);border-radius:6px;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:0.78rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;color:var(--text2);transition:all 0.2s;}
+.rtab.active{background:rgba(232,0,154,0.12);border-color:var(--mag);color:var(--mag);}
+.delay-row{display:flex;align-items:center;gap:1rem;}
+.delay-row input[type=range]{flex:1;accent-color:var(--mag);}
+.delay-val{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:0.9rem;color:var(--mag);min-width:40px;}
+.upload-zone{border:2px dashed var(--border);border-radius:12px;padding:1.5rem 1rem;text-align:center;cursor:pointer;transition:all 0.3s;background:var(--dark3);position:relative;}
+.upload-zone:hover,.upload-zone.dragover{border-color:var(--mag);background:rgba(232,0,154,0.04);}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.uz-icon{font-size:1.8rem;display:block;margin-bottom:0.4rem;}
+.uz-label{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:0.88rem;color:var(--text2);margin-bottom:3px;}
+.uz-sub{font-size:0.72rem;color:#555;}
+.uz-preview{margin-top:0.8rem;display:none;}
+.uz-preview img,.uz-preview video{max-width:100%;border-radius:8px;max-height:140px;}
+.uz-name{font-size:0.78rem;color:var(--green);margin-top:5px;font-family:'Rajdhani',sans-serif;font-weight:600;}
+.vtabs{display:flex;gap:0.6rem;margin-bottom:1rem;}
+.vtab{padding:7px 16px;background:var(--dark3);border:1px solid var(--border);border-radius:6px;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:0.78rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;color:var(--text2);transition:all 0.2s;}
+.vtab.active{background:rgba(232,0,154,0.12);border-color:var(--mag);color:var(--mag);}
+.save-btn{width:100%;padding:14px;background:var(--mag);color:#fff;border:none;border-radius:10px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1.1rem;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;margin-top:0.5rem;}
+.save-btn:hover{background:var(--mag2);}
+.save-msg{text-align:center;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:0.88rem;letter-spacing:1px;height:22px;transition:opacity 0.3s;margin-top:0.5rem;opacity:0;}
+.preview-label{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:0.72rem;letter-spacing:3px;text-transform:uppercase;color:var(--text2);align-self:flex-start;}
+.preview-frame{width:100%;max-width:420px;background:var(--dark3);border:1px solid var(--mag);border-radius:16px;overflow:hidden;box-shadow:0 0 40px rgba(232,0,154,0.2);position:relative;}
+.pf-close{position:absolute;top:10px;right:14px;z-index:2;background:rgba(0,0,0,0.6);border:1px solid rgba(232,0,154,0.4);color:#fff;font-size:1rem;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.pf-text{padding:1.8rem 1.8rem 1.5rem;text-align:center;}
+.pf-tag{display:inline-block;background:var(--mag);color:#fff;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:10px;letter-spacing:3px;text-transform:uppercase;padding:3px 12px;border-radius:20px;margin-bottom:0.8rem;}
+.pf-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:2px;color:#fff;margin-bottom:0.4rem;line-height:1.1;}
+.pf-body{color:var(--text2);font-size:0.82rem;margin-bottom:0.5rem;line-height:1.6;}
+/* GLASS CIRCLES */
+.pf-cd-outer{text-align:center;margin:0.8rem 0;}
+.pf-cd-label{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:0.58rem;letter-spacing:3px;text-transform:uppercase;color:rgba(232,0,154,0.6);margin-bottom:8px;}
+.pf-cd-row{display:flex;align-items:center;justify-content:center;gap:8px;}
+.pf-circle{display:flex;flex-direction:column;align-items:center;gap:5px;}
+.pf-glass{
+  width:74px;height:74px;border-radius:50%;
+  background:radial-gradient(circle at 38% 28%,rgba(255,255,255,0.25) 0%,rgba(232,0,154,0.09) 45%,rgba(8,4,16,0.92) 100%);
+  border:1.5px solid rgba(232,0,154,0.5);
+  box-shadow:0 0 22px rgba(232,0,154,0.55),0 0 50px rgba(232,0,154,0.15),inset 0 2px 10px rgba(255,255,255,0.13);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.pf-glass::before{
+  content:'';position:absolute;top:8px;left:14px;
+  width:44px;height:20px;
+  background:linear-gradient(180deg,rgba(255,255,255,0.28) 0%,transparent 100%);
+  border-radius:50%;
+}
+.pf-glass-num{
+  font-family:'Bebas Neue',sans-serif;font-size:1.85rem;letter-spacing:3px;
+  color:#fff;line-height:1;position:relative;z-index:1;
+  text-shadow:0 0 10px rgba(232,0,154,1),0 0 22px rgba(232,0,154,0.8),0 0 40px rgba(232,0,154,0.4);
+}
+.pf-badge{
+  background:rgba(232,0,154,0.15);border:1px solid rgba(232,0,154,0.45);
+  border-radius:20px;padding:2px 10px;
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:0.52rem;letter-spacing:2.5px;text-transform:uppercase;
+  color:rgba(232,0,154,1);text-shadow:0 0 6px rgba(232,0,154,0.5);
+}
+.pf-colon{
+  font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:#e8009a;
+  padding-bottom:20px;align-self:center;
+  text-shadow:0 0 12px rgba(232,0,154,0.9);
+}
+.pf-btn{display:inline-block;background:var(--mag);color:#fff;padding:11px 26px;border-radius:8px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:0.9rem;letter-spacing:1px;margin-top:1rem;}
+.pf-redir{font-size:0.7rem;color:#555;margin-top:0.5rem;font-family:'Rajdhani',sans-serif;letter-spacing:0.5px;}
+.pf-image img{width:100%;max-height:360px;object-fit:cover;display:block;}
+.pf-video{position:relative;padding-top:56.25%;}
+.pf-video iframe,.pf-video video{position:absolute;inset:0;width:100%;height:100%;border:none;}
+.pf-inactive{padding:3rem;text-align:center;color:var(--text2);font-family:'Rajdhani',sans-serif;font-size:1rem;letter-spacing:1px;}
+.creds-box{background:var(--dark3);border:1px solid var(--border);border-radius:12px;padding:1.5rem;}
+.mode-section{display:none;}
+.mode-section.visible{display:block;}
+@media(max-width:700px){.admin-wrap{grid-template-columns:1fr;}.form-row{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box" id="login-box">
+    <span class="login-icon">🔐</span>
+    <div class="login-logo">TUNING<span>COLOMBIA</span></div>
+    <div class="login-sub">Panel Administrador</div>
+    <input class="l-field" type="text" id="l-user" placeholder="Usuario" autocomplete="username">
+    <input class="l-field" type="password" id="l-pass" placeholder="Contraseña" autocomplete="current-password">
+    <button class="l-btn" onclick="doLogin()">Entrar al panel →</button>
+    <div class="l-error" id="l-error"></div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="admin-screen">
+<div class="admin-wrap">
+  <div class="panel-left">
+    <div class="admin-header">
+      <div class="admin-logo">TUNING<span>COLOMBIA</span></div>
+      <div class="header-actions">
+        <a href="index.html" class="hbtn" target="_blank">👁 Ver sitio</a>
+        <button class="hbtn logout" onclick="doLogout()">⏻ Salir</button>
+      </div>
+    </div>
+
+    <div class="sec-title">Estado del popup</div>
+    <div class="toggle-row">
+      <label class="tl">Popup activo en el sitio</label>
+      <label class="switch"><input type="checkbox" id="pop-active" checked onchange="livePreview()"><span class="slider"></span></label>
+    </div>
+
+    <div class="sec-title">Aparece después de...</div>
+    <div class="form-group">
+      <div class="delay-row">
+        <input type="range" id="pop-delay" min="0" max="15" value="2" step="0.5" oninput="document.getElementById('delay-val').textContent=this.value+'s';livePreview()">
+        <span class="delay-val" id="delay-val">2s</span>
+      </div>
+    </div>
+    <div class="sdiv"></div>
+
+    <div class="sec-title">Tipo de contenido</div>
+    <div class="mode-tabs">
+      <div class="mode-tab active" onclick="setMode('text',this)"><span class="mt-icon">✏️</span><span class="mt-label">Texto</span></div>
+      <div class="mode-tab" onclick="setMode('image',this)"><span class="mt-icon">🖼️</span><span class="mt-label">Imagen</span></div>
+      <div class="mode-tab" onclick="setMode('video',this)"><span class="mt-icon">🎬</span><span class="mt-label">Video</span></div>
+    </div>
+
+    <div id="section-text" class="mode-section visible">
+      <div class="form-group"><label>Etiqueta / Badge</label><input type="text" id="t-tag" value="🔥 OFERTA ESPECIAL" oninput="livePreview()"></div>
+      <div class="form-group"><label>Título principal</label><input type="text" id="t-title" value="¡20% OFF en toda la tienda!" oninput="livePreview()"></div>
+      <div class="form-group"><label>Descripción</label><textarea id="t-body" oninput="livePreview()">Solo por hoy. Accesorios de interior, exterior y audio. ¡No te lo pierdas!</textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label>Texto del botón</label><input type="text" id="t-btn" value="Ver ofertas →" oninput="livePreview()"></div>
+        <div class="form-group"><label>Countdown (seg, 0=sin timer)</label><input type="number" id="t-cd" value="3600" min="0" max="99999" oninput="livePreview()"></div>
+      </div>
+    </div>
+
+    <div id="section-image" class="mode-section">
+      <div class="form-group"><label>URL de imagen</label><input type="text" id="i-url" placeholder="https://ejemplo.com/banner.jpg" oninput="onImgUrl()"><div class="input-hint">O sube desde tu dispositivo ↓</div></div>
+      <div class="upload-zone" id="img-zone">
+        <input type="file" id="img-file" accept="image/*" onchange="onImgFile(this)">
+        <span class="uz-icon">🖼️</span><div class="uz-label">Arrastra o toca para subir imagen</div><div class="uz-sub">JPG, PNG, GIF, WEBP</div>
+        <div class="uz-preview" id="img-preview"><img id="img-prev-el" src="" alt=""><div class="uz-name" id="img-prev-name"></div></div>
+      </div>
+    </div>
+
+    <div id="section-video" class="mode-section">
+      <div class="vtabs">
+        <div class="vtab active" id="vt-yt" onclick="setVType('youtube')">▶ YouTube / Shorts</div>
+        <div class="vtab" id="vt-file" onclick="setVType('file')">📁 Subir video</div>
+      </div>
+      <div id="vsec-youtube"><div class="form-group"><label>URL de YouTube o Shorts</label><input type="text" id="v-url" placeholder="https://youtu.be/..." oninput="livePreview()"></div></div>
+      <div id="vsec-file" style="display:none;">
+        <div class="upload-zone" id="vid-zone">
+          <input type="file" id="vid-file" accept="video/*" onchange="onVidFile(this)">
+          <span class="uz-icon">🎬</span><div class="uz-label">Arrastra o toca para subir video</div><div class="uz-sub">MP4, MOV, WEBM</div>
+          <div class="uz-preview" id="vid-preview"><video id="vid-prev-el" muted playsinline></video><div class="uz-name" id="vid-prev-name"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+    <div class="sec-title">🔗 Redirección al hacer clic en el botón</div>
+    <div class="redir-tabs">
+      <div class="rtab active" id="rt-none" onclick="setRedir('none')">Sin redirección</div>
+      <div class="rtab" id="rt-section" onclick="setRedir('section')">Sección del sitio</div>
+      <div class="rtab" id="rt-url" onclick="setRedir('url')">URL externa</div>
+      <div class="rtab" id="rt-sub" onclick="setRedir('sub')">Subdominio</div>
+    </div>
+    <div id="rsec-none"><p style="color:#555;font-size:0.82rem;font-family:'Rajdhani',sans-serif;">El popup se cierra sin redirigir.</p></div>
+    <div id="rsec-section" style="display:none;"><div class="form-group"><label>Sección destino</label><select id="r-section" onchange="livePreview()"><option value="#inicio">Inicio</option><option value="#servicios">Servicios</option><option value="#tienda">Tienda</option><option value="#descargas">Descargas</option><option value="#ia">Web & IA</option><option value="#contacto">Contacto</option></select></div></div>
+    <div id="rsec-url" style="display:none;"><div class="form-group"><label>URL completa</label><input type="text" id="r-url" placeholder="https://..." oninput="livePreview()"></div></div>
+    <div id="rsec-sub" style="display:none;"><div class="form-group"><label>Subdominio</label><input type="text" id="r-sub" placeholder="chatbot.tuningcolombia.com.co" oninput="livePreview()"><div class="input-hint">Sin https://</div></div></div>
+
+    <div class="sdiv"></div>
+    <div class="sec-title">🔑 Cambiar credenciales del admin</div>
+    <div class="creds-box">
+      <div class="form-row">
+        <div class="form-group"><label>Nuevo usuario</label><input type="text" id="new-user" placeholder="admin"></div>
+        <div class="form-group"><label>Nueva contraseña</label><input type="password" id="new-pass" placeholder="••••••••"></div>
+      </div>
+      <div class="form-group"><label>Confirmar contraseña actual</label><input type="password" id="curr-pass" placeholder="Tu contraseña actual"></div>
+      <button class="save-btn" style="margin-top:0;" onclick="saveCreds()">🔑 Actualizar credenciales</button>
+      <div class="save-msg" id="creds-msg"></div>
+    </div>
+    <div class="sdiv"></div>
+    <button class="save-btn" onclick="saveConfig()">💾 Guardar popup</button>
+    <div class="save-msg" id="save-msg"></div>
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="panel-right">
+    <div class="preview-label">Vista previa en tiempo real</div>
+    <div class="preview-frame" id="preview-frame"></div>
+    <div style="font-size:0.72rem;color:#444;font-family:'Rajdhani',sans-serif;letter-spacing:1px;text-align:center;max-width:300px;line-height:1.6;">Así se verá el popup en el sitio.</div>
+  </div>
+</div>
+</div>
+
+<script>
+// ── CREDENCIALES ──
+const CRED_KEY='tc_admin_creds';
+function getCreds(){try{const c=localStorage.getItem(CRED_KEY);return c?JSON.parse(c):{user:'admin',pass:'tuning2026'};}catch(e){return{user:'admin',pass:'tuning2026'};}}
+
+// ── LOGIN ──
+function doLogin(){
+  const u=document.getElementById('l-user').value.trim();
+  const p=document.getElementById('l-pass').value;
+  const creds=getCreds();
+  if(u===creds.user&&p===creds.pass){
+    localStorage.setItem('tc_admin_ok','1');
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('admin-screen').style.display='block';
+    loadConfig();
+  } else {
+    const err=document.getElementById('l-error');
+    err.textContent='❌ Usuario o contraseña incorrectos';
+    document.getElementById('login-box').classList.add('l-shake');
+    setTimeout(()=>document.getElementById('login-box').classList.remove('l-shake'),400);
+  }
+}
+function doLogout(){
+  localStorage.removeItem('tc_admin_ok');
+  document.getElementById('admin-screen').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('l-user').value='';
+  document.getElementById('l-pass').value='';
+}
+document.getElementById('l-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+
+// Auto-login si ya estaba logueado
+if(localStorage.getItem('tc_admin_ok')==='1'){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('admin-screen').style.display='block';
+}
+
+function saveCreds(){
+  const curr=document.getElementById('curr-pass').value;
+  const creds=getCreds();
+  const msg=document.getElementById('creds-msg');
+  if(curr!==creds.pass){showMsg('creds-msg','❌ Contraseña actual incorrecta','var(--red)');return;}
+  const nu=document.getElementById('new-user').value.trim();
+  const np=document.getElementById('new-pass').value;
+  if(!nu||!np){showMsg('creds-msg','❌ Completa todos los campos','var(--red)');return;}
+  localStorage.setItem(CRED_KEY,JSON.stringify({user:nu,pass:np}));
+  showMsg('creds-msg','✓ Credenciales actualizadas','var(--green)');
+  document.getElementById('curr-pass').value='';document.getElementById('new-user').value='';document.getElementById('new-pass').value='';
+}
+
+// ── ESTADO ──
+let currentMode='text',currentVType='youtube',currentRedir='none';
+let imgData='',vidData='';
+const DEF={active:true,mode:'text',delay:2000,tag:'🔥 OFERTA ESPECIAL',title:'¡20% OFF en toda la tienda!',body:'Solo por hoy. Accesorios de interior, exterior y audio. ¡No te lo pierdas!',btnText:'Ver ofertas →',countdown:3600,redirType:'none',redirSection:'#tienda',redirUrl:'',redirSub:'',imgSrc:'',videoUrl:'',videoType:'youtube'};
+
+function loadConfig(){
+  try{
+    const saved=localStorage.getItem('tc_popup');
+    if(!saved){livePreview();return;}
+    const cfg=Object.assign({},DEF,JSON.parse(saved));
+    document.getElementById('pop-active').checked=cfg.active;
+    document.getElementById('pop-delay').value=cfg.delay/1000;
+    document.getElementById('delay-val').textContent=(cfg.delay/1000)+'s';
+    document.getElementById('t-tag').value=cfg.tag||DEF.tag;
+    document.getElementById('t-title').value=cfg.title||DEF.title;
+    document.getElementById('t-body').value=cfg.body||DEF.body;
+    document.getElementById('t-btn').value=cfg.btnText||DEF.btnText;
+    document.getElementById('t-cd').value=cfg.countdown;
+    document.getElementById('r-url').value=cfg.redirUrl||'';
+    document.getElementById('r-sub').value=cfg.redirSub||'';
+    if(cfg.imgSrc){imgData=cfg.imgSrc;showImgPreview(cfg.imgSrc,'imagen guardada');}
+    if(cfg.videoUrl){document.getElementById('v-url').value=cfg.videoUrl;}
+    currentVType=cfg.videoType||'youtube';
+    const modeIdx=['text','image','video'].indexOf(cfg.mode||'text');
+    setMode(cfg.mode||'text',document.querySelectorAll('.mode-tab')[modeIdx<0?0:modeIdx]);
+    setRedir(cfg.redirType||'none');
+    if(cfg.redirSection)document.getElementById('r-section').value=cfg.redirSection;
+    if(cfg.videoType==='file'&&cfg.videoUrl){vidData=cfg.videoUrl;setVType('file');}
+  }catch(e){}
+  livePreview();
+}
+
+// Load on start if logged in
+if(localStorage.getItem('tc_admin_ok')==='1') loadConfig();
+
+function setMode(mode,el){
+  currentMode=mode;
+  document.querySelectorAll('.mode-tab').forEach(t=>t.classList.remove('active'));
+  if(el)el.classList.add('active');
+  document.querySelectorAll('.mode-section').forEach(s=>s.classList.remove('visible'));
+  document.getElementById('section-'+mode).classList.add('visible');
+  livePreview();
+}
+function setVType(type){
+  currentVType=type;
+  document.getElementById('vt-yt').classList.toggle('active',type==='youtube');
+  document.getElementById('vt-file').classList.toggle('active',type==='file');
+  document.getElementById('vsec-youtube').style.display=type==='youtube'?'block':'none';
+  document.getElementById('vsec-file').style.display=type==='file'?'block':'none';
+  livePreview();
+}
+function setRedir(type){
+  currentRedir=type;
+  ['none','section','url','sub'].forEach(t=>{
+    document.getElementById('rt-'+t).classList.toggle('active',t===type);
+    document.getElementById('rsec-'+t).style.display=t===type?'block':'none';
+  });
+  livePreview();
+}
+function getRedirTarget(){
+  if(currentRedir==='section')return document.getElementById('r-section').value;
+  if(currentRedir==='url')return document.getElementById('r-url').value||'';
+  if(currentRedir==='sub'){const s=document.getElementById('r-sub').value;return s?'https://'+s:'';}
+  return '';
+}
+function onImgUrl(){imgData=document.getElementById('i-url').value;showImgPreview(imgData,'desde URL');livePreview();}
+function onImgFile(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{imgData=e.target.result;showImgPreview(imgData,f.name);livePreview();};r.readAsDataURL(f);}
+function showImgPreview(src,name){document.getElementById('img-prev-el').src=src;document.getElementById('img-prev-name').textContent='✓ '+name;document.getElementById('img-preview').style.display='block';}
+function onVidFile(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{vidData=e.target.result;const v=document.getElementById('vid-prev-el');v.src=vidData;document.getElementById('vid-prev-name').textContent='✓ '+f.name;document.getElementById('vid-preview').style.display='block';livePreview();};r.readAsDataURL(f);}
+function getYTId(url){const m=(url||'').match(/(?:youtu\.be\/|v=|shorts\/)([A-Za-z0-9_-]{11})/);return m?m[1]:'';}
+
+function glassCircle(val,lbl){
+  return `<div class="pf-circle">
+    <div class="pf-glass"><span class="pf-glass-num">${String(val).padStart(2,'0')}</span></div>
+    <div class="pf-badge">${lbl}</div>
+  </div>`;}
+
+function livePreview(){
+  const frame=document.getElementById('preview-frame');
+  const active=document.getElementById('pop-active').checked;
+  if(!active){frame.innerHTML='<div class="pf-inactive">🚫<br><br>Popup desactivado</div>';return;}
+  const tag=document.getElementById('t-tag').value;
+  const title=document.getElementById('t-title').value;
+  const body=document.getElementById('t-body').value;
+  const btn=document.getElementById('t-btn').value;
+  const cd=parseInt(document.getElementById('t-cd').value)||0;
+  const redir=getRedirTarget();
+  const redirHint=redir?`<div class="pf-redir">🔗 ${redir}</div>`:'';
+  if(currentMode==='text'){
+    let cdHtml='';
+    if(cd>0){
+      const hh=Math.floor(cd/3600),mm=Math.floor((cd%3600)/60),ss=cd%60;
+      cdHtml=`<div class="pf-cd-outer">
+        <div class="pf-cd-label">oferta expira en</div>
+        <div class="pf-cd-row">
+          ${glassCircle(hh,'HRS')}
+          <span class="pf-colon">:</span>
+          ${glassCircle(mm,'MIN')}
+          <span class="pf-colon">:</span>
+          ${glassCircle(ss,'SEG')}
+        </div>
+      </div>`;
+    }
+    frame.innerHTML=`<div class="pf-close">✕</div><div class="pf-text"><div class="pf-tag">${tag}</div><div class="pf-title">${title}</div><div class="pf-body">${body}</div>${cdHtml}<div class="pf-btn">${btn}</div>${redirHint}</div>`;
+  } else if(currentMode==='image'){
+    const src=imgData||'https://placehold.co/420x280/1a1a22/e8009a?text=Tu+imagen+aqui';
+    frame.innerHTML=`<div class="pf-close">✕</div><div class="pf-image"><img src="${src}" alt="popup"></div>`;
+  } else if(currentMode==='video'){
+    if(currentVType==='youtube'){
+      const id=getYTId(document.getElementById('v-url').value);
+      if(id)frame.innerHTML=`<div class="pf-close">✕</div><div class="pf-video"><iframe src="https://www.youtube.com/embed/${id}" allowfullscreen></iframe></div>`;
+      else frame.innerHTML='<div class="pf-inactive">▶️<br><br>Pega URL de YouTube</div>';
+    } else {
+      if(vidData)frame.innerHTML=`<div class="pf-close">✕</div><div class="pf-video"><video src="${vidData}" controls muted></video></div>`;
+      else frame.innerHTML='<div class="pf-inactive">🎬<br><br>Sube un video</div>';
+    }
+  }
+}
+
+function saveConfig(){
+  const cfg={
+    active:document.getElementById('pop-active').checked,
+    mode:currentMode,
+    delay:parseFloat(document.getElementById('pop-delay').value)*1000,
+    tag:document.getElementById('t-tag').value,
+    title:document.getElementById('t-title').value,
+    body:document.getElementById('t-body').value,
+    btnText:document.getElementById('t-btn').value,
+    countdown:parseInt(document.getElementById('t-cd').value)||0,
+    redirType:currentRedir,
+    redirSection:document.getElementById('r-section').value,
+    redirUrl:document.getElementById('r-url').value,
+    redirSub:document.getElementById('r-sub').value,
+    imgSrc:currentMode==='image'?imgData:'',
+    videoUrl:currentMode==='video'?(currentVType==='youtube'?document.getElementById('v-url').value:vidData):'',
+    videoType:currentVType
+  };
+  localStorage.setItem('tc_popup',JSON.stringify(cfg));
+  showMsg('save-msg','✓ Popup guardado y activo en el sitio','var(--green)');
+}
+
+function showMsg(id,txt,color){
+  const el=document.getElementById(id);
+  el.textContent=txt;el.style.color=color;el.style.opacity='1';
+  setTimeout(()=>el.style.opacity='0',3000);
+}
+
+['img-zone','vid-zone'].forEach(id=>{
+  const el=document.getElementById(id);if(!el)return;
+  el.addEventListener('dragover',e=>{e.preventDefault();el.classList.add('dragover');});
+  el.addEventListener('dragleave',()=>el.classList.remove('dragover'));
+  el.addEventListener('drop',e=>{
+    e.preventDefault();el.classList.remove('dragover');
+    const f=e.dataTransfer.files[0];if(!f)return;
+    if(id==='img-zone'){const dt=new DataTransfer();dt.items.add(f);document.getElementById('img-file').files=dt.files;onImgFile(document.getElementById('img-file'));}
+    else{const dt=new DataTransfer();dt.items.add(f);document.getElementById('vid-file').files=dt.files;onVidFile(document.getElementById('vid-file'));}
+  });
+});
+</script>
+</body>
+</html>
