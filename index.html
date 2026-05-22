@@ -819,17 +819,17 @@
   <div class="hero-grid"></div>
   <div class="hero-content">
     <div>
-      <div class="hero-badge">🇨🇴 Tuning Colombia — Est. 2010</div>
-      <h1>ELEVA<br>TU <em>AUTO</em><br>AL LÍMITE</h1>
-      <p class="hero-sub">Accesorios premium, audio y video para USB, instalación profesional, páginas web con IA y chatbots. Todo en un solo lugar.</p>
+      <div class="hero-badge" id="h-badge">🇨🇴 Tuning Colombia — Est. 2010</div>
+      <h1 id="h-title">ELEVA<br>TU <em>AUTO</em><br>AL LÍMITE</h1>
+      <p class="hero-sub" id="h-sub">Accesorios premium, audio y video para USB, instalación profesional, páginas web con IA y chatbots. Todo en un solo lugar.</p>
       <div class="hero-btns">
-        <a href="#tienda" class="btn-primary">🛍️ Ver tienda</a>
-        <a href="#contacto" class="btn-outline">📞 Contáctanos</a>
+        <a id="h-btn1" href="#tienda" class="btn-primary">🛍️ Ver tienda</a>
+        <a id="h-btn2" href="#contacto" class="btn-outline">📞 Contáctanos</a>
       </div>
       <div class="hero-stats">
-        <div class="hero-stat"><span class="num">500+</span><span class="lbl">Clientes</span></div>
-        <div class="hero-stat"><span class="num">10+</span><span class="lbl">Años</span></div>
-        <div class="hero-stat"><span class="num">24/7</span><span class="lbl">Online</span></div>
+        <div class="hero-stat"><span class="num" id="h-s1n">500+</span><span class="lbl" id="h-s1l">Clientes</span></div>
+        <div class="hero-stat"><span class="num" id="h-s2n">10+</span><span class="lbl" id="h-s2l">Años</span></div>
+        <div class="hero-stat"><span class="num" id="h-s3n">24/7</span><span class="lbl" id="h-s3l">Online</span></div>
       </div>
     </div>
     <div class="hero-visual">
@@ -1367,6 +1367,28 @@ function toggleMenu() {
     links.style.cssText='display:flex;flex-direction:column;position:fixed;top:68px;left:0;right:0;background:#0a0a0c;padding:1.5rem 2rem;gap:1.2rem;border-bottom:1px solid rgba(232,0,154,0.2);';
   }
 }
+
+// ── HERO LOADER ──
+(function loadHero(){
+  try {
+    const h = localStorage.getItem('tc_hero');
+    if (!h) return;
+    const d = JSON.parse(h);
+    if (d.badge) document.getElementById('h-badge').textContent = d.badge;
+    if (d.title) document.getElementById('h-title').innerHTML = d.title;
+    if (d.sub) document.getElementById('h-sub').textContent = d.sub;
+    if (d.btn1txt) document.getElementById('h-btn1').textContent = d.btn1txt;
+    if (d.btn1url) document.getElementById('h-btn1').href = d.btn1url;
+    if (d.btn2txt) document.getElementById('h-btn2').textContent = d.btn2txt;
+    if (d.btn2url) document.getElementById('h-btn2').href = d.btn2url;
+    if (d.s1n) document.getElementById('h-s1n').textContent = d.s1n;
+    if (d.s1l) document.getElementById('h-s1l').textContent = d.s1l;
+    if (d.s2n) document.getElementById('h-s2n').textContent = d.s2n;
+    if (d.s2l) document.getElementById('h-s2l').textContent = d.s2l;
+    if (d.s3n) document.getElementById('h-s3n').textContent = d.s3n;
+    if (d.s3l) document.getElementById('h-s3l').textContent = d.s3l;
+  } catch(e){}
+})();
 
 // ── NAV SCROLL ──
 window.addEventListener('scroll', () => {

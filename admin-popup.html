@@ -37,6 +37,7 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--dark);color:var(--t
 .hbtn:hover{border-color:var(--mag);color:var(--mag);}
 .hbtn.logout{border-color:rgba(255,68,102,0.3);color:var(--red);}
 .hbtn.logout:hover{border-color:var(--red);}
+.hbtn.active-tab{background:rgba(232,0,154,0.12);border-color:var(--mag);color:var(--mag);}
 .sec-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:0.72rem;letter-spacing:3px;text-transform:uppercase;color:var(--mag);margin-bottom:0.8rem;}
 .sdiv{height:1px;background:var(--border);margin:1.5rem 0;}
 .toggle-row{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;padding:1rem 1.2rem;background:var(--dark3);border:1px solid var(--border);border-radius:10px;}
@@ -159,6 +160,8 @@ input:checked+.slider::before{transform:translateX(22px);background:#fff;}
     <div class="admin-header">
       <div class="admin-logo">TUNING<span>COLOMBIA</span></div>
       <div class="header-actions">
+        <button class="hbtn" onclick="showModule('popup')" id="tab-popup">🎯 Popup</button>
+        <button class="hbtn active-tab" onclick="showModule('hero')" id="tab-hero">🏠 Hero</button>
         <a href="index.html" class="hbtn" target="_blank">👁 Ver sitio</a>
         <button class="hbtn logout" onclick="doLogout()">⏻ Salir</button>
       </div>
@@ -247,6 +250,56 @@ input:checked+.slider::before{transform:translateX(22px);background:#fff;}
     <div class="sdiv"></div>
     <button class="save-btn" onclick="saveConfig()">💾 Guardar popup</button>
     <div class="save-msg" id="save-msg"></div>
+  </div>
+
+  <!-- HERO MODULE -->
+  <div id="module-hero" style="display:none;padding:2rem;border-right:1px solid var(--border);overflow-y:auto;">
+    <div class="admin-header">
+      <div class="admin-logo">TUNING<span>COLOMBIA</span></div>
+      <div class="header-actions">
+        <button class="hbtn" onclick="showModule('popup')" >🎯 Popup</button>
+        <button class="hbtn active-tab" onclick="showModule('hero')">🏠 Hero</button>
+        <a href="index.html" class="hbtn" target="_blank">👁 Ver sitio</a>
+        <button class="hbtn logout" onclick="doLogout()">⏻ Salir</button>
+      </div>
+    </div>
+    <div class="sec-title">Badge / Etiqueta superior</div>
+    <div class="form-group"><label>Texto del badge</label><input type="text" id="h-badge" value="🇨🇴 Tuning Colombia — Est. 2010" oninput="heroPreview()"></div>
+    <div class="sdiv"></div>
+    <div class="sec-title">Título principal</div>
+    <div class="form-group"><label>Línea 1</label><input type="text" id="h-t1" value="ELEVA" oninput="heroPreview()"></div>
+    <div class="form-group"><label>Línea 2 (palabra en magenta va entre *asteriscos*)</label><input type="text" id="h-t2" value="TU *AUTO*" oninput="heroPreview()"></div>
+    <div class="form-group"><label>Línea 3</label><input type="text" id="h-t3" value="AL LÍMITE" oninput="heroPreview()"></div>
+    <div class="sdiv"></div>
+    <div class="sec-title">Subtítulo</div>
+    <div class="form-group"><label>Texto del subtítulo</label><textarea id="h-sub" oninput="heroPreview()">Accesorios premium, audio y video para USB, instalación profesional, páginas web con IA y chatbots. Todo en un solo lugar.</textarea></div>
+    <div class="sdiv"></div>
+    <div class="sec-title">Botones</div>
+    <div class="form-row">
+      <div class="form-group"><label>Botón 1 — Texto</label><input type="text" id="h-b1t" value="🛍️ Ver tienda" oninput="heroPreview()"></div>
+      <div class="form-group"><label>Botón 1 — Link</label><input type="text" id="h-b1u" value="#tienda" oninput="heroPreview()"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Botón 2 — Texto</label><input type="text" id="h-b2t" value="📞 Contáctanos" oninput="heroPreview()"></div>
+      <div class="form-group"><label>Botón 2 — Link</label><input type="text" id="h-b2u" value="#contacto" oninput="heroPreview()"></div>
+    </div>
+    <div class="sdiv"></div>
+    <div class="sec-title">Estadísticas</div>
+    <div class="form-row">
+      <div class="form-group"><label>Stat 1 — Número</label><input type="text" id="h-s1n" value="500+" oninput="heroPreview()"></div>
+      <div class="form-group"><label>Stat 1 — Etiqueta</label><input type="text" id="h-s1l" value="Clientes" oninput="heroPreview()"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Stat 2 — Número</label><input type="text" id="h-s2n" value="10+" oninput="heroPreview()"></div>
+      <div class="form-group"><label>Stat 2 — Etiqueta</label><input type="text" id="h-s2l" value="Años" oninput="heroPreview()"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Stat 3 — Número</label><input type="text" id="h-s3n" value="24/7" oninput="heroPreview()"></div>
+      <div class="form-group"><label>Stat 3 — Etiqueta</label><input type="text" id="h-s3l" value="Online" oninput="heroPreview()"></div>
+    </div>
+    <div class="sdiv"></div>
+    <button class="save-btn" onclick="saveHero()">💾 Guardar Hero</button>
+    <div class="save-msg" id="hero-msg"></div>
   </div>
 
   <!-- PREVIEW -->
@@ -341,7 +394,7 @@ function loadConfig(){
 }
 
 // Load on start if logged in
-if(localStorage.getItem('tc_admin_ok')==='1') loadConfig();
+if(localStorage.getItem('tc_admin_ok')==='1'){ loadConfig(); loadHeroAdmin(); }
 
 function setMode(mode,el){
   currentMode=mode;
@@ -453,6 +506,83 @@ function showMsg(id,txt,color){
   const el=document.getElementById(id);
   el.textContent=txt;el.style.color=color;el.style.opacity='1';
   setTimeout(()=>el.style.opacity='0',3000);
+}
+
+// ── MODULE SWITCHER ──
+function showModule(mod){
+  document.getElementById('module-hero').style.display = mod==='hero' ? 'contents' : 'none';
+  const popupLeft = document.querySelector('.panel-left');
+  const popupRight = document.querySelector('.panel-right');
+  if(mod==='hero'){
+    popupLeft.style.display='none';
+    popupRight.style.display='none';
+    document.getElementById('module-hero').style.display='block';
+  } else {
+    popupLeft.style.display='block';
+    popupRight.style.display='flex';
+    document.getElementById('module-hero').style.display='none';
+  }
+  document.getElementById('tab-popup').classList.toggle('active-tab', mod==='popup');
+  document.getElementById('tab-hero').classList.toggle('active-tab', mod==='hero');
+}
+
+// ── HERO PREVIEW (live) ──
+function heroPreview(){
+  // just save live so index reflects changes instantly
+}
+
+// ── SAVE HERO ──
+function saveHero(){
+  const t2 = document.getElementById('h-t2').value;
+  const t2html = t2.replace(/\*(.*?)\*/g, '<em>$1</em>');
+  const t1 = document.getElementById('h-t1').value;
+  const t3 = document.getElementById('h-t3').value;
+  const titleHtml = `${t1}<br>${t2html}<br>${t3}`;
+  const data = {
+    badge: document.getElementById('h-badge').value,
+    title: titleHtml,
+    sub: document.getElementById('h-sub').value,
+    btn1txt: document.getElementById('h-b1t').value,
+    btn1url: document.getElementById('h-b1u').value,
+    btn2txt: document.getElementById('h-b2t').value,
+    btn2url: document.getElementById('h-b2u').value,
+    s1n: document.getElementById('h-s1n').value,
+    s1l: document.getElementById('h-s1l').value,
+    s2n: document.getElementById('h-s2n').value,
+    s2l: document.getElementById('h-s2l').value,
+    s3n: document.getElementById('h-s3n').value,
+    s3l: document.getElementById('h-s3l').value,
+  };
+  localStorage.setItem('tc_hero', JSON.stringify(data));
+  showMsg('hero-msg','✓ Hero guardado — recarga el sitio para verlo','var(--green)');
+}
+
+// ── LOAD HERO VALUES ──
+function loadHeroAdmin(){
+  try{
+    const h = localStorage.getItem('tc_hero');
+    if(!h) return;
+    const d = JSON.parse(h);
+    if(d.badge) document.getElementById('h-badge').value = d.badge;
+    if(d.sub) document.getElementById('h-sub').value = d.sub;
+    if(d.btn1txt) document.getElementById('h-b1t').value = d.btn1txt;
+    if(d.btn1url) document.getElementById('h-b1u').value = d.btn1url;
+    if(d.btn2txt) document.getElementById('h-b2t').value = d.btn2txt;
+    if(d.btn2url) document.getElementById('h-b2u').value = d.btn2url;
+    if(d.s1n) document.getElementById('h-s1n').value = d.s1n;
+    if(d.s1l) document.getElementById('h-s1l').value = d.s1l;
+    if(d.s2n) document.getElementById('h-s2n').value = d.s2n;
+    if(d.s2l) document.getElementById('h-s2l').value = d.s2l;
+    if(d.s3n) document.getElementById('h-s3n').value = d.s3n;
+    if(d.s3l) document.getElementById('h-s3l').value = d.s3l;
+    if(d.title){
+      const plain = d.title.replace(/<br>/g,'|').replace(/<em>(.*?)<\/em>/g,'*$1*').replace(/<[^>]+>/g,'');
+      const parts = plain.split('|');
+      if(parts[0]) document.getElementById('h-t1').value = parts[0];
+      if(parts[1]) document.getElementById('h-t2').value = parts[1];
+      if(parts[2]) document.getElementById('h-t3').value = parts[2];
+    }
+  }catch(e){}
 }
 
 ['img-zone','vid-zone'].forEach(id=>{
