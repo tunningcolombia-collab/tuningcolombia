@@ -153,7 +153,8 @@ input:checked+.sl::before{transform:translateX(22px);background:#fff;}
         <div class="adm-logo">TUNING<span>COLOMBIA</span></div>
         <button class="hbtn on" onclick="showMod('popup')">🎯 Popup</button>
         <button class="hbtn" onclick="showMod('hero')">🏠 Hero</button>
-        <button class="hbtn" onclick="showMod('slider')">🎬 Slider</button>
+        <button class="hbtn" onclick="showMod('heroslider')">🖼 Slider Hero</button>
+        <button class="hbtn" onclick="showMod('slider')">🎬 Slider Principal</button>
         <a href="index.html" class="hbtn" target="_blank">👁 Sitio</a>
         <button class="hbtn logout" onclick="doLogout()">⏻ Salir</button>
       </div>
@@ -251,7 +252,8 @@ input:checked+.sl::before{transform:translateX(22px);background:#fff;}
         <div class="adm-logo">TUNING<span>COLOMBIA</span></div>
         <button class="hbtn" onclick="showMod('popup')">🎯 Popup</button>
         <button class="hbtn on" onclick="showMod('hero')">🏠 Hero</button>
-        <button class="hbtn" onclick="showMod('slider')">🎬 Slider</button>
+        <button class="hbtn" onclick="showMod('heroslider')">🖼 Slider Hero</button>
+        <button class="hbtn" onclick="showMod('slider')">🎬 Slider Principal</button>
         <a href="index.html" class="hbtn" target="_blank">👁 Sitio</a>
         <button class="hbtn logout" onclick="doLogout()">⏻ Salir</button>
       </div>
@@ -342,21 +344,136 @@ input:checked+.sl::before{transform:translateX(22px);background:#fff;}
         <div class="adm-logo">TUNING<span>COLOMBIA</span></div>
         <button class="hbtn" onclick="showMod('popup')">🎯 Popup</button>
         <button class="hbtn" onclick="showMod('hero')">🏠 Hero</button>
-        <button class="hbtn on" onclick="showMod('slider')">🎬 Slider</button>
+        <button class="hbtn" onclick="showMod('heroslider')">🖼 Slider Hero</button>
+        <button class="hbtn on" onclick="showMod('slider')">🎬 Slider Principal</button>
         <a href="index.html" class="hbtn" target="_blank">👁 Sitio</a>
         <button class="hbtn logout" onclick="doLogout()">⏻ Salir</button>
       </div>
+
       <div class="stitle">Slides del slider principal</div>
-      <p style="color:var(--text2);font-size:0.82rem;font-family:'Rajdhani',sans-serif;margin-bottom:1.5rem;line-height:1.6;">1-6 slides. Cada uno tiene imagen, tag, título y botón.</p>
+      <p style="color:var(--text2);font-size:0.82rem;font-family:'Rajdhani',sans-serif;margin-bottom:1.5rem;line-height:1.6;">Máximo 6 slides. Sube imagen o pega URL, edita el texto y guarda.</p>
+
+      <!-- Zona drag & drop para subir imagen nueva -->
+      <div id="sl-dropzone" style="border:2px dashed rgba(232,0,154,0.35);border-radius:14px;padding:1.4rem 1rem;text-align:center;cursor:pointer;transition:all 0.3s;background:var(--dark3);margin-bottom:1.5rem;position:relative;" onclick="document.getElementById('sl-bulk-file').click()" ondragover="event.preventDefault();this.style.borderColor='var(--mag)'" ondragleave="this.style.borderColor=''" ondrop="onBulkDrop(event)">
+        <input type="file" id="sl-bulk-file" accept="image/*,video/*" multiple style="display:none" onchange="onBulkFiles(this)">
+        <div style="font-size:2rem;margin-bottom:0.4rem;">📸</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:0.9rem;color:var(--text2);">Arrastra fotos/videos aquí o toca para subir</div>
+        <div style="font-size:0.72rem;color:#555;margin-top:4px;">JPG · PNG · WEBP · MP4 — se agregan como nuevos slides</div>
+      </div>
+
       <div id="slides-editor"></div>
-      <button class="sbtn" style="background:var(--dark3);border:1px solid var(--mag);color:var(--mag);margin-bottom:1rem;" onclick="addSlide()">+ Agregar slide</button>
+
+      <button class="sbtn" style="background:var(--dark3);border:1px solid var(--mag);color:var(--mag);margin-bottom:1rem;" onclick="addSlide()">+ Agregar slide vacío</button>
       <div class="sdiv"></div>
       <button class="sbtn" onclick="saveSlider()">💾 Guardar slider</button>
       <div class="smsg" id="slider-msg"></div>
     </div>
     <div class="panel-r">
-      <div class="plabel">Preview slide 1</div>
-      <div id="slider-prev" style="width:100%;max-width:440px;border-radius:12px;overflow:hidden;border:1px solid var(--border);"></div>
+      <div class="plabel" style="margin-bottom:0.8rem;">Preview del slider</div>
+      <!-- Mini slider preview -->
+      <div id="slider-preview-wrap" style="width:100%;max-width:440px;border-radius:14px;overflow:hidden;border:1px solid rgba(232,0,154,0.4);box-shadow:0 0 30px rgba(232,0,154,0.15);position:relative;aspect-ratio:16/10;background:var(--dark3);">
+        <div id="slider-prev" style="width:100%;height:100%;"></div>
+        <button onclick="slPrevMove(-1)" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);border:1px solid rgba(232,0,154,0.4);color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;">&#8249;</button>
+        <button onclick="slPrevMove(1)" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);border:1px solid rgba(232,0,154,0.4);color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;">&#8250;</button>
+        <div id="sl-prev-dots" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:6px;"></div>
+      </div>
+      <div style="margin-top:1rem;">
+        <!-- Thumbnails galería -->
+        <div class="plabel" style="margin-bottom:0.6rem;">Galería de slides</div>
+        <div id="sl-thumbs" style="display:flex;flex-wrap:wrap;gap:0.6rem;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ HERO SLIDER MODULE ═══ -->
+  <div id="mod-heroslider" class="mod">
+    <div class="panel-l">
+      <div class="adm-hdr">
+        <div class="adm-logo">TUNING<span>COLOMBIA</span></div>
+        <button class="hbtn" onclick="showMod('popup')">🎯 Popup</button>
+        <button class="hbtn" onclick="showMod('hero')">🏠 Hero</button>
+        <button class="hbtn on" onclick="showMod('heroslider')">🖼 Slider Hero</button>
+        <button class="hbtn" onclick="showMod('slider')">🎬 Slider Principal</button>
+        <a href="index.html" class="hbtn" target="_blank">👁 Sitio</a>
+        <button class="hbtn logout" onclick="doLogout()">⏻ Salir</button>
+      </div>
+
+      <div class="stitle">Slider pequeño del Hero</div>
+      <p style="color:var(--text2);font-size:0.82rem;font-family:'Rajdhani',sans-serif;margin-bottom:1.2rem;line-height:1.6;">
+        Es el slider a la <strong style="color:var(--text);">derecha del texto principal</strong> en la sección Hero. Sube fotos o un video de YouTube. Máx. 8 imágenes.
+      </p>
+
+      <!-- Modo: imágenes o video -->
+      <div class="stitle">Tipo de contenido</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;margin-bottom:1.5rem;">
+        <div id="hs-tab-img" class="mtab on" onclick="setHSMode('images')"><span class="mi">🖼️</span><span class="ml">Imágenes</span></div>
+        <div id="hs-tab-vid" class="mtab" onclick="setHSMode('video')"><span class="mi">▶️</span><span class="ml">Video YouTube</span></div>
+      </div>
+
+      <!-- Modo imágenes -->
+      <div id="hs-sec-images">
+        <!-- Dropzone masivo -->
+        <div id="hs-dropzone" style="border:2px dashed rgba(232,0,154,0.35);border-radius:14px;padding:1.4rem 1rem;text-align:center;cursor:pointer;transition:all 0.3s;background:var(--dark3);margin-bottom:1.5rem;position:relative;"
+          onclick="document.getElementById('hs-bulk-file').click()"
+          ondragover="event.preventDefault();this.style.borderColor='var(--mag)'"
+          ondragleave="this.style.borderColor=''"
+          ondrop="onHSBulkDrop(event)">
+          <input type="file" id="hs-bulk-file" accept="image/*" multiple style="display:none" onchange="onHSBulkFiles(this)">
+          <div style="font-size:2rem;margin-bottom:0.4rem;">📸</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:0.9rem;color:var(--text2);">Arrastra fotos aquí o toca para subir</div>
+          <div style="font-size:0.72rem;color:#555;margin-top:4px;">JPG · PNG · WEBP · GIF — máx. 8 imágenes</div>
+        </div>
+
+        <!-- Lista de imágenes subidas -->
+        <div class="stitle">Imágenes actuales</div>
+        <div id="hs-img-list" style="display:flex;flex-direction:column;gap:0.7rem;margin-bottom:1rem;"></div>
+
+        <!-- Agregar por URL -->
+        <div class="fg">
+          <label>Agregar imagen por URL</label>
+          <div style="display:flex;gap:0.6rem;">
+            <input type="text" id="hs-url-input" placeholder="https://..." style="flex:1;">
+            <button onclick="addHSUrl()" style="background:var(--mag);border:none;color:#fff;padding:0 16px;border-radius:8px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:0.85rem;cursor:pointer;white-space:nowrap;">+ Agregar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modo video -->
+      <div id="hs-sec-video" style="display:none;">
+        <div class="fg">
+          <label>URL de YouTube</label>
+          <input type="text" id="hs-vid-url" placeholder="https://youtu.be/..." oninput="updHSPrev()">
+          <div class="hint">El video se reproduce automáticamente en loop y sin sonido.</div>
+        </div>
+        <div id="hs-vid-prev-wrap" style="display:none;margin-top:1rem;border-radius:10px;overflow:hidden;border:1px solid var(--border);aspect-ratio:16/10;">
+          <iframe id="hs-vid-frame" src="" style="width:100%;height:100%;border:none;" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+      </div>
+
+      <div class="sdiv"></div>
+      <button class="sbtn" onclick="saveHeroSlider()">💾 Guardar Slider Hero</button>
+      <div class="smsg" id="heroslider-msg"></div>
+    </div>
+
+    <!-- Panel derecho: preview -->
+    <div class="panel-r">
+      <div class="plabel" style="margin-bottom:0.8rem;">Vista previa del Hero Slider</div>
+      <div style="position:relative;width:100%;max-width:440px;aspect-ratio:16/10;border-radius:14px;overflow:hidden;border:1px solid rgba(232,0,154,0.4);box-shadow:0 0 30px rgba(232,0,154,0.15);background:var(--dark3);">
+        <div id="hs-prev-inner" style="width:100%;height:100%;"></div>
+        <button onclick="hsAdminPrevMove(-1)" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);border:1px solid rgba(232,0,154,0.4);color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;">&#8249;</button>
+        <button onclick="hsAdminPrevMove(1)" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);border:1px solid rgba(232,0,154,0.4);color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;">&#8250;</button>
+        <div id="hs-prev-dots" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:5px;"></div>
+      </div>
+
+      <div style="margin-top:1.2rem;">
+        <div class="plabel" style="margin-bottom:0.6rem;">Miniaturas</div>
+        <div id="hs-thumbs-grid" style="display:flex;flex-wrap:wrap;gap:0.5rem;"></div>
+      </div>
+
+      <div style="margin-top:1.2rem;background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:1rem;">
+        <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:0.72rem;letter-spacing:2px;color:var(--text2);text-transform:uppercase;margin-bottom:0.5rem;">ℹ️ Dónde aparece</div>
+        <p style="font-size:0.82rem;color:#666;line-height:1.6;">Este slider está a la <strong style="color:var(--text2);">derecha</strong> del texto hero en la página principal. En móvil aparece debajo del texto.</p>
+      </div>
     </div>
   </div>
 
@@ -414,7 +531,7 @@ function saveCreds(){
 // ══ INIT ══
 async function initAdmin(){
   const tab = localStorage.getItem('tc_tab')||'popup';
-  await Promise.all([loadPopup(), loadHero(), loadSlider()]);
+  await Promise.all([loadPopup(), loadHero(), loadSlider(), loadHeroSlider()]);
   showMod(tab);
 }
 
@@ -432,11 +549,13 @@ function showMod(mod){
   document.querySelectorAll('.hbtn').forEach(b=>{
     b.classList.remove('on');
     if(b.textContent.includes('Popup')&&mod==='popup') b.classList.add('on');
-    if(b.textContent.includes('Hero')&&mod==='hero') b.classList.add('on');
-    if(b.textContent.includes('Slider')&&mod==='slider') b.classList.add('on');
+    if(b.textContent.includes('Hero')&&!b.textContent.includes('Slider')&&mod==='hero') b.classList.add('on');
+    if(b.textContent.includes('Slider Hero')&&mod==='heroslider') b.classList.add('on');
+    if(b.textContent.includes('Slider Principal')&&mod==='slider') b.classList.add('on');
   });
   if(mod==='hero') updHP();
   if(mod==='slider') updSliderPrev();
+  if(mod==='heroslider'){ renderHSList(); updHSPrev(); }
 }
 
 // ══ POPUP ══
@@ -684,7 +803,7 @@ async function saveHero(){
 
 // ══ SLIDER ══
 let slidesData=[];
-let slideImgs={};
+let slPrevIdx=0;
 const DEF_SLIDES=[
   {img:'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=1400&q=85',tag:'🔥 Tuning Colombia',title:'ELEVA TU AUTO / AL SIGUIENTE NIVEL',btnText:'Ver tienda',btnLink:'#tienda'},
   {img:'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1400&q=85',tag:'🎵 Audio & Video USB',title:'MÚSICA Y VIDEO / PARA TU VIAJE',btnText:'Ver USB',btnLink:'#descargas'},
@@ -702,34 +821,95 @@ function renderSlides(){
   if(!ed)return;
   let h='';
   slidesData.forEach(function(sl,i){
-    h+=`<div style="background:var(--dark3);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:1rem;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
-        <div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:0.8rem;letter-spacing:2px;color:var(--mag);">SLIDE ${i+1}</div>
-        <button onclick="removeSlide(${i})" style="background:rgba(255,68,102,0.15);border:1px solid rgba(255,68,102,0.4);color:var(--red);padding:4px 12px;border-radius:6px;font-family:Rajdhani,sans-serif;font-weight:600;font-size:0.75rem;cursor:pointer;">🗑 Eliminar</button>
+    const isVideo=sl.img&&(sl.img.startsWith('data:video')||sl.img.match(/\.(mp4|mov|webm)$/i));
+    const thumbEl=sl.img
+      ?(isVideo
+        ?`<video src="${sl.img}" style="width:100%;height:80px;object-fit:cover;border-radius:6px;" muted playsinline></video>`
+        :`<img src="${sl.img}" style="width:100%;height:80px;object-fit:cover;border-radius:6px;">`)
+      :`<div style="width:100%;height:80px;background:var(--dark4);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;">🖼️</div>`;
+
+    h+=`<div id="slide-block-${i}" style="background:var(--dark3);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:1rem;transition:border-color 0.2s;">
+      <!-- Cabecera slide -->
+      <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:1rem;">
+        <div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:2px;color:var(--mag);flex:1;">SLIDE ${i+1}</div>
+        <button onclick="slPrevShow(${i})" style="background:rgba(232,0,154,0.1);border:1px solid rgba(232,0,154,0.3);color:var(--mag);padding:4px 10px;border-radius:6px;font-family:Rajdhani,sans-serif;font-weight:600;font-size:0.72rem;cursor:pointer;">👁 Preview</button>
+        <button onclick="moveSlide(${i},-1)" ${i===0?'disabled':''} style="background:var(--dark4);border:1px solid var(--border);color:var(--text2);padding:4px 8px;border-radius:6px;font-size:0.8rem;cursor:pointer;" title="Subir">↑</button>
+        <button onclick="moveSlide(${i},1)" ${i===slidesData.length-1?'disabled':''} style="background:var(--dark4);border:1px solid var(--border);color:var(--text2);padding:4px 8px;border-radius:6px;font-size:0.8rem;cursor:pointer;" title="Bajar">↓</button>
+        <button onclick="removeSlide(${i})" style="background:rgba(255,68,102,0.12);border:1px solid rgba(255,68,102,0.35);color:var(--red);padding:4px 10px;border-radius:6px;font-family:Rajdhani,sans-serif;font-weight:600;font-size:0.72rem;cursor:pointer;">🗑</button>
       </div>
-      <div class="fg"><label>Imagen URL</label><input type="text" id="sl-img-${i}" value="${(sl.img||'').replace(/"/g,'&quot;')}" onchange="slidesData[${i}].img=this.value;updSliderPrev()"></div>
-      <div class="uz" style="margin-bottom:1rem;padding:0.8rem;" onclick="document.getElementById('sl-f-${i}').click()">
-        <input type="file" id="sl-f-${i}" accept="image/*" style="display:none" onchange="onSlideFile(${i},this)">
-        <span style="font-size:1.2rem;">🖼️</span>
-        <div style="font-family:Rajdhani,sans-serif;font-size:0.82rem;color:var(--text2);">Subir imagen del slide</div>
-        ${slideImgs[i]?`<img src="${slideImgs[i]}" style="max-width:100%;max-height:60px;border-radius:6px;margin-top:6px;">`: ''}
+
+      <!-- Zona de imagen/video -->
+      <div style="margin-bottom:1rem;">
+        ${thumbEl}
+        <div style="display:flex;gap:0.6rem;margin-top:0.6rem;flex-wrap:wrap;">
+          <label style="flex:1;min-width:120px;background:rgba(232,0,154,0.1);border:1px solid rgba(232,0,154,0.35);color:var(--mag);padding:7px 12px;border-radius:7px;font-family:Rajdhani,sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:1px;cursor:pointer;text-align:center;white-space:nowrap;">
+            📁 Subir foto/video
+            <input type="file" accept="image/*,video/*" style="display:none" onchange="onSlideFile(${i},this)">
+          </label>
+          ${sl.img?`<button onclick="clearSlideImg(${i})" style="background:rgba(255,68,102,0.12);border:1px solid rgba(255,68,102,0.35);color:var(--red);padding:7px 12px;border-radius:7px;font-family:Rajdhani,sans-serif;font-weight:600;font-size:0.78rem;cursor:pointer;white-space:nowrap;">🗑 Quitar</button>`:''}
+        </div>
+        <div class="fg" style="margin-top:0.6rem;margin-bottom:0;">
+          <label>O pega URL de imagen</label>
+          <input type="text" placeholder="https://..." value="${(sl.img&&!sl.img.startsWith('data:'))?sl.img.replace(/"/g,'&quot;'):''}" oninput="slidesData[${i}].img=this.value;renderSlides()">
+        </div>
       </div>
-      <div class="fg"><label>Tag</label><input type="text" id="sl-tag-${i}" value="${(sl.tag||'').replace(/"/g,'&quot;')}" onchange="slidesData[${i}].tag=this.value;updSliderPrev()"></div>
-      <div class="fg"><label>Título (usa / para nueva línea)</label><input type="text" id="sl-title-${i}" value="${(sl.title||'').replace(/"/g,'&quot;')}" onchange="slidesData[${i}].title=this.value;updSliderPrev()"></div>
-      <div class="fr">
-        <div class="fg"><label>Botón texto</label><input type="text" id="sl-bt-${i}" value="${(sl.btnText||'').replace(/"/g,'&quot;')}" onchange="slidesData[${i}].btnText=this.value"></div>
-        <div class="fg"><label>Botón link</label><input type="text" id="sl-bl-${i}" value="${(sl.btnLink||'').replace(/"/g,'&quot;')}" onchange="slidesData[${i}].btnLink=this.value"></div>
-      </div>
+
+      <!-- Campos de texto colapsables -->
+      <details open>
+        <summary style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:1.5px;color:var(--text2);text-transform:uppercase;cursor:pointer;margin-bottom:0.8rem;">✏️ Texto y botón</summary>
+        <div class="fg"><label>Tag</label><input type="text" value="${(sl.tag||'').replace(/"/g,'&quot;')}" oninput="slidesData[${i}].tag=this.value;updSliderPrev()"></div>
+        <div class="fg"><label>Título (usa / para nueva línea)</label><input type="text" value="${(sl.title||'').replace(/"/g,'&quot;')}" oninput="slidesData[${i}].title=this.value;updSliderPrev()"></div>
+        <div class="fr">
+          <div class="fg"><label>Botón texto</label><input type="text" value="${(sl.btnText||'').replace(/"/g,'&quot;')}" oninput="slidesData[${i}].btnText=this.value"></div>
+          <div class="fg"><label>Botón link</label><input type="text" value="${(sl.btnLink||'').replace(/"/g,'&quot;')}" oninput="slidesData[${i}].btnLink=this.value"></div>
+        </div>
+      </details>
     </div>`;
   });
   ed.innerHTML=h;
   updSliderPrev();
+  updSliderThumbs();
 }
 
 function onSlideFile(i,inp){
   const f=inp.files[0];if(!f)return;
-  const r=new FileReader();r.onload=e=>{slideImgs[i]=e.target.result;slidesData[i].img=e.target.result;renderSlides();};r.readAsDataURL(f);
+  const r=new FileReader();
+  r.onload=e=>{slidesData[i].img=e.target.result;renderSlides();slPrevShow(i);};
+  r.readAsDataURL(f);
 }
+
+function clearSlideImg(i){
+  slidesData[i].img='';renderSlides();
+}
+
+function onBulkFiles(inp){
+  const files=Array.from(inp.files);
+  files.forEach(f=>{
+    if(slidesData.length>=6)return;
+    const r=new FileReader();
+    r.onload=e=>{
+      slidesData.push({img:e.target.result,tag:'🔥 Nuevo slide',title:'TÍTULO / DEL SLIDE',btnText:'Ver más',btnLink:'#'});
+      renderSlides();
+    };
+    r.readAsDataURL(f);
+  });
+}
+
+function onBulkDrop(e){
+  e.preventDefault();
+  document.getElementById('sl-dropzone').style.borderColor='';
+  const files=Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')||f.type.startsWith('video/'));
+  files.forEach(f=>{
+    if(slidesData.length>=6)return;
+    const r=new FileReader();
+    r.onload=ev=>{
+      slidesData.push({img:ev.target.result,tag:'🔥 Nuevo slide',title:'TÍTULO / DEL SLIDE',btnText:'Ver más',btnLink:'#'});
+      renderSlides();
+    };
+    r.readAsDataURL(f);
+  });
+}
+
 function addSlide(){
   if(slidesData.length>=6){showMsg('slider-msg','Máximo 6 slides','var(--red)');return;}
   slidesData.push({img:'',tag:'🔥 Nuevo slide',title:'TÍTULO / DEL SLIDE',btnText:'Ver más',btnLink:'#'});
@@ -737,19 +917,231 @@ function addSlide(){
 }
 function removeSlide(i){
   if(slidesData.length<=1){showMsg('slider-msg','Mínimo 1 slide','var(--red)');return;}
-  slidesData.splice(i,1);delete slideImgs[i];renderSlides();
+  slidesData.splice(i,1);
+  slPrevIdx=Math.min(slPrevIdx,slidesData.length-1);
+  renderSlides();
+}
+function moveSlide(i,dir){
+  const j=i+dir;
+  if(j<0||j>=slidesData.length)return;
+  [slidesData[i],slidesData[j]]=[slidesData[j],slidesData[i]];
+  renderSlides();
+}
+
+// ── PREVIEW DEL SLIDER (panel derecho) ──
+function slPrevShow(i){
+  slPrevIdx=i;updSliderPrev();
+}
+function slPrevMove(dir){
+  slPrevIdx=(slPrevIdx+dir+slidesData.length)%slidesData.length;
+  updSliderPrev();
 }
 function updSliderPrev(){
   const p=document.getElementById('slider-prev');
+  const dotsEl=document.getElementById('sl-prev-dots');
   if(!p||!slidesData.length)return;
-  const sl=slidesData[0];
+  slPrevIdx=Math.max(0,Math.min(slPrevIdx,slidesData.length-1));
+  const sl=slidesData[slPrevIdx];
   const th=(sl.title||'').replace(/\//g,'<br>');
-  const bg=sl.img?`url('${sl.img}') center/cover`:'var(--dark4)';
-  p.innerHTML=`<div style="background:linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)),${bg};height:220px;display:flex;align-items:flex-end;padding:1.5rem;border-radius:12px;"><div><div style="display:inline-block;background:#e8009a;color:#fff;font-family:Rajdhani,sans-serif;font-weight:700;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-bottom:0.6rem;">${sl.tag}</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:2px;color:#fff;margin-bottom:0.8rem;line-height:1.1;">${th}</div><div style="display:inline-block;background:#e8009a;color:#fff;padding:8px 18px;border-radius:6px;font-family:Rajdhani,sans-serif;font-weight:700;font-size:0.85rem;">${sl.btnText}</div></div></div>`;
+  const isVideo=sl.img&&(sl.img.startsWith('data:video')||sl.img.match(/\.(mp4|mov|webm)$/i));
+  let bgMedia='';
+  if(isVideo){
+    bgMedia=`<video src="${sl.img}" autoplay muted loop playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></video>`;
+  }
+  const bg=(!isVideo&&sl.img)?`url('${sl.img}') center/cover`:'#0a0a0c';
+  p.innerHTML=`<div style="position:relative;width:100%;height:100%;background:${(!isVideo&&sl.img)?bg:'#0a0a0c'};display:flex;align-items:flex-end;padding:1.2rem;">
+    ${isVideo?bgMedia:''}
+    <div style="position:absolute;inset:0;background:linear-gradient(transparent 30%,rgba(0,0,0,0.65));"></div>
+    <div style="position:relative;z-index:1;">
+      <div style="display:inline-block;background:#e8009a;color:#fff;font-family:Rajdhani,sans-serif;font-weight:700;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;padding:2px 10px;border-radius:20px;margin-bottom:0.5rem;">${sl.tag||'TAG'}</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:2px;color:#fff;margin-bottom:0.6rem;line-height:1.1;">${th||'TÍTULO'}</div>
+      <div style="display:inline-block;background:#e8009a;color:#fff;padding:6px 14px;border-radius:6px;font-family:Rajdhani,sans-serif;font-weight:700;font-size:0.78rem;">${sl.btnText||'Botón'}</div>
+    </div>
+  </div>`;
+  // Dots
+  if(dotsEl){
+    dotsEl.innerHTML=slidesData.map((_,j)=>`<button onclick="slPrevShow(${j})" style="width:${j===slPrevIdx?'18':'8'}px;height:8px;border-radius:4px;background:${j===slPrevIdx?'#e8009a':'rgba(255,255,255,0.4)'};border:none;cursor:pointer;transition:all 0.2s;"></button>`).join('');
+  }
+  updSliderThumbs();
 }
+
+function updSliderThumbs(){
+  const el=document.getElementById('sl-thumbs');
+  if(!el)return;
+  el.innerHTML=slidesData.map((sl,i)=>{
+    const isVideo=sl.img&&(sl.img.startsWith('data:video')||sl.img.match(/\.(mp4|mov|webm)$/i));
+    const active=i===slPrevIdx;
+    const media=sl.img
+      ?(isVideo
+        ?`<video src="${sl.img}" muted playsinline style="width:100%;height:100%;object-fit:cover;"></video>`
+        :`<img src="${sl.img}" style="width:100%;height:100%;object-fit:cover;">`)
+      :`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:#555;">🖼️</div>`;
+    return `<div onclick="slPrevShow(${i})" style="width:72px;height:48px;border-radius:6px;overflow:hidden;border:2px solid ${active?'#e8009a':'rgba(232,0,154,0.2)'};cursor:pointer;flex-shrink:0;position:relative;transition:border-color 0.2s;">
+      ${media}
+      <div style="position:absolute;bottom:2px;left:2px;background:rgba(0,0,0,0.7);color:#fff;font-size:0.55rem;font-family:Rajdhani,sans-serif;font-weight:700;padding:1px 4px;border-radius:3px;">${i+1}</div>
+    </div>`;
+  }).join('');
+}
+
 async function saveSlider(){
-  await apiSet('slider',slidesData);
-  showMsg('slider-msg','✓ Slider guardado','var(--green)');
+  // Guardar sin data URIs muy pesadas — advertir si hay base64
+  const heavy=slidesData.some(s=>s.img&&s.img.startsWith('data:')&&s.img.length>500000);
+  if(heavy) showMsg('slider-msg','⚠ Imágenes grandes — puede tardar...','#ffaa00');
+  const ok=await apiSet('slider',slidesData);
+  showMsg('slider-msg',ok?'✓ Slider guardado':'❌ Error al guardar',ok?'var(--green)':'var(--red)');
+}
+
+// ══ HERO SLIDER ══
+let hsMode = 'images';      // 'images' | 'video'
+let hsImages = [];          // [{src: dataURL|url}]
+let hsAdminPrevIdx = 0;
+
+async function loadHeroSlider(){
+  const d = await apiGet('heroslider');
+  if(!d) return;
+  hsMode = d.mode || 'images';
+  hsImages = d.images || [];
+  if(d.videoUrl) document.getElementById('hs-vid-url').value = d.videoUrl;
+  setHSMode(hsMode, true);
+  renderHSList();
+  updHSPrev();
+}
+
+function setHSMode(mode, silent){
+  hsMode = mode;
+  document.getElementById('hs-tab-img').classList.toggle('on', mode==='images');
+  document.getElementById('hs-tab-vid').classList.toggle('on', mode==='video');
+  document.getElementById('hs-sec-images').style.display = mode==='images'?'block':'none';
+  document.getElementById('hs-sec-video').style.display  = mode==='video'?'block':'none';
+  if(!silent) updHSPrev();
+}
+
+// ── Subida masiva ──
+function onHSBulkFiles(inp){
+  Array.from(inp.files).forEach(f => {
+    if(hsImages.length >= 8){ showMsg('heroslider-msg','Máximo 8 imágenes','var(--red)'); return; }
+    const r = new FileReader();
+    r.onload = e => { hsImages.push({src: e.target.result}); renderHSList(); updHSPrev(); };
+    r.readAsDataURL(f);
+  });
+  inp.value='';
+}
+function onHSBulkDrop(e){
+  e.preventDefault();
+  document.getElementById('hs-dropzone').style.borderColor='';
+  Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')).forEach(f=>{
+    if(hsImages.length>=8) return;
+    const r=new FileReader();
+    r.onload=ev=>{ hsImages.push({src:ev.target.result}); renderHSList(); updHSPrev(); };
+    r.readAsDataURL(f);
+  });
+}
+function addHSUrl(){
+  const val = document.getElementById('hs-url-input').value.trim();
+  if(!val) return;
+  if(hsImages.length>=8){ showMsg('heroslider-msg','Máximo 8 imágenes','var(--red)'); return; }
+  hsImages.push({src: val});
+  document.getElementById('hs-url-input').value='';
+  renderHSList(); updHSPrev();
+}
+
+// ── Lista de imágenes en el panel izquierdo ──
+function renderHSList(){
+  const el = document.getElementById('hs-img-list');
+  if(!el) return;
+  if(!hsImages.length){
+    el.innerHTML='<div style="color:#555;font-size:0.82rem;font-family:Rajdhani,sans-serif;text-align:center;padding:1rem;">Sin imágenes — sube fotos arriba</div>';
+    updHSThumbsGrid(); return;
+  }
+  el.innerHTML = hsImages.map((img,i)=>`
+    <div style="display:flex;align-items:center;gap:0.8rem;background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:0.6rem;${i===hsAdminPrevIdx?'border-color:rgba(232,0,154,0.5);':''}" onclick="hsAdminPrevShow(${i})">
+      <img src="${img.src}" style="width:64px;height:44px;object-fit:cover;border-radius:6px;flex-shrink:0;cursor:pointer;">
+      <div style="flex:1;min-width:0;">
+        <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:0.75rem;letter-spacing:1px;color:var(--mag);">IMAGEN ${i+1}</div>
+        <div style="font-size:0.7rem;color:#555;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${img.src.startsWith('data:')?'Archivo subido':img.src}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <button onclick="event.stopPropagation();moveHSImg(${i},-1)" ${i===0?'disabled':''} style="background:var(--dark4);border:1px solid var(--border);color:var(--text2);width:26px;height:24px;border-radius:4px;cursor:pointer;font-size:0.75rem;">↑</button>
+        <button onclick="event.stopPropagation();moveHSImg(${i},1)" ${i===hsImages.length-1?'disabled':''} style="background:var(--dark4);border:1px solid var(--border);color:var(--text2);width:26px;height:24px;border-radius:4px;cursor:pointer;font-size:0.75rem;">↓</button>
+      </div>
+      <button onclick="event.stopPropagation();removeHSImg(${i})" style="background:rgba(255,68,102,0.12);border:1px solid rgba(255,68,102,0.35);color:var(--red);width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:0.9rem;flex-shrink:0;">🗑</button>
+    </div>
+  `).join('');
+  updHSThumbsGrid();
+}
+
+function removeHSImg(i){
+  hsImages.splice(i,1);
+  hsAdminPrevIdx = Math.max(0, Math.min(hsAdminPrevIdx, hsImages.length-1));
+  renderHSList(); updHSPrev();
+}
+function moveHSImg(i,dir){
+  const j=i+dir;
+  if(j<0||j>=hsImages.length) return;
+  [hsImages[i],hsImages[j]]=[hsImages[j],hsImages[i]];
+  renderHSList(); updHSPrev();
+}
+
+// ── Preview panel derecho ──
+function hsAdminPrevShow(i){ hsAdminPrevIdx=i; updHSPrev(); renderHSList(); }
+function hsAdminPrevMove(dir){ hsAdminPrevIdx=(hsAdminPrevIdx+dir+Math.max(1,hsImages.length))%Math.max(1,hsImages.length); updHSPrev(); renderHSList(); }
+
+function updHSPrev(){
+  const inner = document.getElementById('hs-prev-inner');
+  const dotsEl = document.getElementById('hs-prev-dots');
+  if(!inner) return;
+
+  if(hsMode==='video'){
+    const url = (document.getElementById('hs-vid-url')||{}).value||'';
+    const vid = url.match(/(?:youtu\.be\/|v=|shorts\/)([A-Za-z0-9_-]{11})/);
+    const id = vid?vid[1]:'';
+    const wrap = document.getElementById('hs-vid-prev-wrap');
+    if(id){
+      inner.innerHTML=`<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0" allow="autoplay;encrypted-media" allowfullscreen style="width:100%;height:100%;border:none;"></iframe>`;
+      if(wrap) wrap.style.display='block';
+      document.getElementById('hs-vid-frame').src=`https://www.youtube.com/embed/${id}?autoplay=0&mute=1`;
+    } else {
+      inner.innerHTML='<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0.5rem;color:#555;"><span style="font-size:2rem;">▶️</span><span style="font-family:Rajdhani,sans-serif;font-size:0.85rem;">Pega URL de YouTube</span></div>';
+    }
+    if(dotsEl) dotsEl.innerHTML='';
+    return;
+  }
+
+  if(!hsImages.length){
+    inner.innerHTML='<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0.5rem;color:#555;"><span style="font-size:2.5rem;">🚗</span><span style="font-family:Rajdhani,sans-serif;font-size:0.85rem;">Sube fotos arriba</span></div>';
+    if(dotsEl) dotsEl.innerHTML='';
+    return;
+  }
+
+  hsAdminPrevIdx = Math.max(0, Math.min(hsAdminPrevIdx, hsImages.length-1));
+  const img = hsImages[hsAdminPrevIdx];
+  inner.innerHTML=`<img src="${img.src}" style="width:100%;height:100%;object-fit:cover;display:block;">`;
+
+  if(dotsEl){
+    dotsEl.innerHTML = hsImages.map((_,j)=>`<button onclick="hsAdminPrevShow(${j})" style="width:${j===hsAdminPrevIdx?'18':'8'}px;height:8px;border-radius:4px;background:${j===hsAdminPrevIdx?'#e8009a':'rgba(255,255,255,0.4)'};border:none;cursor:pointer;transition:all 0.2s;"></button>`).join('');
+  }
+}
+
+function updHSThumbsGrid(){
+  const el = document.getElementById('hs-thumbs-grid');
+  if(!el) return;
+  if(!hsImages.length){ el.innerHTML='<div style="color:#555;font-size:0.78rem;font-family:Rajdhani,sans-serif;">Sin imágenes</div>'; return; }
+  el.innerHTML = hsImages.map((img,i)=>`
+    <div onclick="hsAdminPrevShow(${i})" style="width:66px;height:46px;border-radius:6px;overflow:hidden;border:2px solid ${i===hsAdminPrevIdx?'#e8009a':'rgba(232,0,154,0.2)'};cursor:pointer;flex-shrink:0;position:relative;transition:border-color 0.2s;">
+      <img src="${img.src}" style="width:100%;height:100%;object-fit:cover;">
+      <div style="position:absolute;bottom:2px;left:2px;background:rgba(0,0,0,0.7);color:#fff;font-size:0.5rem;font-family:Rajdhani,sans-serif;font-weight:700;padding:1px 4px;border-radius:3px;">${i+1}</div>
+    </div>
+  `).join('');
+}
+
+async function saveHeroSlider(){
+  const data = {
+    mode: hsMode,
+    images: hsMode==='images' ? hsImages : [],
+    videoUrl: hsMode==='video' ? (document.getElementById('hs-vid-url').value||'') : ''
+  };
+  const ok = await apiSet('heroslider', data);
+  showMsg('heroslider-msg', ok?'✓ Slider Hero guardado':'❌ Error al guardar', ok?'var(--green)':'var(--red)');
 }
 
 // ══ UTILS ══
