@@ -31,6 +31,14 @@
     color: var(--text);
     overflow-x: hidden;
   }
+  /* ASPHALT TEXTURE */
+  body::after {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='a'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeBlend in='SourceGraphic' mode='multiply'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23a)' opacity='0.06'/%3E%3C/svg%3E");
+    pointer-events: none;
+    opacity: 0.5;
+  }
 
   /* SCROLLBAR */
   ::-webkit-scrollbar { width: 4px; }
@@ -165,9 +173,9 @@
   /* ─── HERO ─── */
   .hero {
     position: relative;
-    min-height: 100vh;
+    min-height: auto;
     display: flex; align-items: center; justify-content: center;
-    padding: 100px 2rem 4rem;
+    padding: 5rem 2rem 4rem;
     overflow: hidden;
   }
   .hero-bg {
@@ -826,6 +834,93 @@
   .hero-card.c3 { animation: float 6s ease-in-out 2s infinite; }
 
   /* ─── RESPONSIVE ─── */
+  /* ─── MAIN SLIDER ─── */
+  .main-slider-wrap {
+    position: relative; width: 100%; height: 90vh; min-height: 500px; max-height: 800px;
+    overflow: hidden; margin-top: 68px; z-index: 1;
+  }
+  .ms-track {
+    display: flex; height: 100%;
+    transition: transform 0.7s cubic-bezier(.4,0,.2,1);
+  }
+  .ms-slide {
+    min-width: 100%; height: 100%;
+    display: flex; align-items: flex-end; padding: 4rem 5%;
+    flex-shrink: 0;
+  }
+  .ms-content { max-width: 600px; }
+  .ms-tag {
+    display: inline-block;
+    background: var(--mag); color: #fff;
+    font-family: 'Rajdhani', sans-serif; font-weight: 700;
+    font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase;
+    padding: 5px 16px; border-radius: 20px; margin-bottom: 1rem;
+  }
+  .ms-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    letter-spacing: 3px; line-height: 1; color: #fff;
+    margin-bottom: 1.5rem; text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+  }
+  .ms-title em { color: var(--mag); font-style: normal; }
+  .ms-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: rgba(0,0,0,0.4); border: 1px solid rgba(232,0,154,0.5);
+    color: #fff; font-size: 2.5rem; width: 52px; height: 52px;
+    border-radius: 50%; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; z-index: 2; line-height: 1;
+    backdrop-filter: blur(4px);
+  }
+  .ms-arrow:hover { background: var(--mag); border-color: var(--mag); transform: translateY(-50%) scale(1.1); }
+  .ms-prev { left: 20px; }
+  .ms-next { right: 20px; }
+  .ms-dots {
+    position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 8px; z-index: 2;
+  }
+  .ms-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: rgba(255,255,255,0.4); cursor: pointer;
+    border: none; transition: all 0.2s;
+  }
+  .ms-dot.active { background: var(--mag); transform: scale(1.4); box-shadow: 0 0 8px rgba(232,0,154,0.8); }
+  /* CATEGORY BANNERS */
+  .cat-banners {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 0; position: relative; z-index: 1;
+  }
+  .cat-banner {
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 1.8rem 2rem; height: 220px;
+    text-decoration: none; position: relative; overflow: hidden;
+    transition: all 0.3s;
+  }
+  .cat-banner::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(transparent, rgba(232,0,154,0.15));
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .cat-banner:hover::after { opacity: 1; }
+  .cat-banner:hover { transform: scale(1.02); z-index: 2; }
+  .cb-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem; letter-spacing: 2px; color: #fff;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    display: block; margin-bottom: 4px;
+  }
+  .cb-sub {
+    font-family: 'Rajdhani', sans-serif; font-weight: 600;
+    font-size: 0.85rem; letter-spacing: 1px;
+    color: rgba(255,255,255,0.7); display: block; margin-bottom: 8px;
+  }
+  .cb-cta {
+    display: inline-block; background: var(--mag); color: #fff;
+    font-family: 'Rajdhani', sans-serif; font-weight: 700;
+    font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase;
+    padding: 5px 14px; border-radius: 4px;
+  }
+
   /* ─── RESPONSIVE MOBILE ─── */
   @media (max-width: 900px) {
     /* NAV */
@@ -857,11 +952,19 @@
   }
 
   @media (max-width: 600px) {
+    /* MAIN SLIDER */
+    .main-slider-wrap { height: 55vw; min-height: 280px; margin-top: 68px; }
+    .ms-slide { padding: 1.5rem 1rem; }
+    .ms-title { font-size: 1.8rem; }
+    .ms-arrow { width: 36px; height: 36px; font-size: 1.5rem; }
+    .cat-banners { grid-template-columns: 1fr; }
+    .cat-banner { height: 140px; padding: 1rem 1.2rem; }
+    .cb-label { font-size: 1.4rem; }
     /* NAV MOBILE MENU */
     nav { padding: 0 1rem; }
     .nav-logo { font-size: 1.1rem; }
     /* HERO */
-    .hero { padding: 80px 1rem 2.5rem; }
+    .hero { padding: 2.5rem 1rem 2.5rem; }
     .hero h1 { font-size: 2.8rem; letter-spacing: 2px; }
     .hero-sub { font-size: 0.9rem; }
     .hero-btns { flex-direction: column; gap: 0.8rem; }
@@ -927,7 +1030,7 @@
     <span id="nav-logo-text">TUNING<span style="color:var(--mag)">COLOMBIA</span></span>
   </a>
   <ul class="nav-links">
-    <li><a href="#descargas">Descargas</a></li>
+    <li><a href="#descargas">USB</a></li>
     <li><a href="#tienda">Tienda</a></li>
     <li><a href="#servicios">Servicios</a></li>
     <li><a href="#ia">Web & IA</a></li>
@@ -935,6 +1038,67 @@
   </ul>
   <button class="nav-hamburger" onclick="toggleMenu()">☰</button>
 </nav>
+
+<!-- MAIN SLIDER -->
+<div class="main-slider-wrap" id="main-slider-wrap">
+  <div class="ms-track" id="ms-track">
+    <div class="ms-slide" style="background:linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),url('https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=1400&q=85') center/cover">
+      <div class="ms-content">
+        <div class="ms-tag">🔥 Tuning Colombia</div>
+        <h2 class="ms-title">ELEVA TU AUTO<br><em>AL SIGUIENTE NIVEL</em></h2>
+        <a href="#tienda" class="btn-primary">Ver tienda →</a>
+      </div>
+    </div>
+    <div class="ms-slide" style="background:linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1400&q=85') center/cover">
+      <div class="ms-content">
+        <div class="ms-tag">🎵 Audio & Video USB</div>
+        <h2 class="ms-title">MÚSICA Y VIDEO<br><em>PARA TU VIAJE</em></h2>
+        <a href="#descargas" class="btn-primary">Ver descargas →</a>
+      </div>
+    </div>
+    <div class="ms-slide" style="background:linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),url('https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=1400&q=85') center/cover">
+      <div class="ms-content">
+        <div class="ms-tag">🔧 Instalación Profesional</div>
+        <h2 class="ms-title">INSTALAMOS<br><em>TODO LO QUE VENDES</em></h2>
+        <a href="#servicios" class="btn-primary">Ver servicios →</a>
+      </div>
+    </div>
+    <div class="ms-slide" style="background:linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),url('https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=1400&q=85') center/cover">
+      <div class="ms-content">
+        <div class="ms-tag">🌐 Páginas Web con IA</div>
+        <h2 class="ms-title">TU NEGOCIO<br><em>EN LÍNEA HOY</em></h2>
+        <a href="#ia" class="btn-primary">Ver más →</a>
+      </div>
+    </div>
+  </div>
+  <button class="ms-arrow ms-prev" onclick="msMove(-1)">&#8249;</button>
+  <button class="ms-arrow ms-next" onclick="msMove(1)">&#8250;</button>
+  <div class="ms-dots" id="ms-dots">
+    <button class="ms-dot active" onclick="msGo(0)"></button>
+    <button class="ms-dot" onclick="msGo(1)"></button>
+    <button class="ms-dot" onclick="msGo(2)"></button>
+    <button class="ms-dot" onclick="msGo(3)"></button>
+  </div>
+</div>
+
+<!-- CATEGORY BANNERS -->
+<div class="cat-banners">
+  <a href="#tienda" class="cat-banner" style="background:linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.6)),url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80') center/cover">
+    <span class="cb-label">🚗 Exterior</span>
+    <span class="cb-sub">Spoilers · Vinilos · Luces</span>
+    <span class="cb-cta">Ver →</span>
+  </a>
+  <a href="#tienda" class="cat-banner" style="background:linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.6)),url('https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=600&q=80') center/cover">
+    <span class="cb-label">💺 Interior</span>
+    <span class="cb-sub">Tapicería · Pantallas · RGB</span>
+    <span class="cb-cta">Ver →</span>
+  </a>
+  <a href="#descargas" class="cat-banner" style="background:linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.6)),url('https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&q=80') center/cover">
+    <span class="cb-label">🎵 Audio & Video</span>
+    <span class="cb-sub">USB · HD · 4K</span>
+    <span class="cb-cta">Ver →</span>
+  </a>
+</div>
 
 <!-- HERO -->
 <section class="hero" id="inicio">
@@ -1572,6 +1736,23 @@ function sliderMove(dir) {
   if (!n) return;
   sliderIndex = (sliderIndex + dir + n) % n;
   sliderGo(sliderIndex);
+}
+
+// ── MAIN SLIDER ──
+let msIdx = 0;
+const msTotalSlides = 4;
+let msAutoPlay = setInterval(() => msMove(1), 5000);
+
+function msMove(dir) {
+  msIdx = (msIdx + dir + msTotalSlides) % msTotalSlides;
+  msGo(msIdx);
+}
+function msGo(i) {
+  msIdx = i;
+  document.getElementById('ms-track').style.transform = `translateX(-${i * 100}%)`;
+  document.querySelectorAll('.ms-dot').forEach((d, j) => d.classList.toggle('active', j === i));
+  clearInterval(msAutoPlay);
+  msAutoPlay = setInterval(() => msMove(1), 5000);
 }
 
 // ── NAV SCROLL ──
