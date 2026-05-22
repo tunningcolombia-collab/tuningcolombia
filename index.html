@@ -337,6 +337,53 @@
     border-radius: 1px;
   }
 
+  /* ─── HERO SLIDER ─── */
+  .hero-slider {
+    position: relative; width: 100%; max-width: 480px;
+    aspect-ratio: 16/10; border-radius: 20px; overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: 0 0 40px rgba(232,0,154,0.2);
+    background: var(--dark3);
+  }
+  .hs-track {
+    display: flex; width: 100%; height: 100%;
+    transition: transform 0.5s cubic-bezier(.4,0,.2,1);
+  }
+  .hs-slide {
+    min-width: 100%; height: 100%; flex-shrink: 0;
+    object-fit: cover; display: block;
+  }
+  .hs-slide-video {
+    min-width: 100%; height: 100%; flex-shrink: 0; border: none;
+  }
+  .hs-empty {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: var(--text2); gap: 1rem;
+  }
+  .hs-empty span { font-size: 3rem; }
+  .hs-empty p { font-size: 0.85rem; text-align: center; line-height: 1.6; font-family: 'Rajdhani', sans-serif; font-weight: 600; letter-spacing: 1px; }
+  .hs-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: rgba(0,0,0,0.5); border: 1px solid rgba(232,0,154,0.4);
+    color: #fff; font-size: 1.8rem; width: 38px; height: 38px;
+    border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; z-index: 2; line-height: 1;
+  }
+  .hs-arrow:hover { background: var(--mag); border-color: var(--mag); }
+  .hs-prev { left: 10px; }
+  .hs-next { right: 10px; }
+  .hs-dots {
+    position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 6px; z-index: 2;
+  }
+  .hs-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(255,255,255,0.4); cursor: pointer; transition: all 0.2s;
+    border: none;
+  }
+  .hs-dot.active { background: var(--mag); transform: scale(1.3); }
+
   /* ─── SECTION BASE ─── */
   section { padding: 5rem 2rem; position: relative; z-index: 1; }
   .section-label {
@@ -802,7 +849,10 @@
 
 <!-- NAV -->
 <nav>
-  <a href="#" class="nav-logo">TUNING<span>COLOMBIA</span></a>
+  <a href="#" class="nav-logo" id="nav-logo-wrap">
+    <img id="nav-logo-img" src="" alt="Tuning Colombia" style="display:none;height:44px;width:auto;object-fit:contain;">
+    <span id="nav-logo-text">TUNING<span style="color:var(--mag)">COLOMBIA</span></span>
+  </a>
   <ul class="nav-links">
     <li><a href="#servicios">Servicios</a></li>
     <li><a href="#tienda">Tienda</a></li>
@@ -833,34 +883,15 @@
       </div>
     </div>
     <div class="hero-visual">
-      <div class="hero-card-stack">
-        <div class="hero-card c1">
-          <div class="card-inner">
-            <div>
-              <div class="card-tag">⚡ Interior</div>
-              <div class="card-title">Accesorios Premium</div>
-            </div>
-            <div class="card-line"></div>
-          </div>
+      <div class="hero-slider" id="hero-slider">
+        <div class="hs-track" id="hs-track"></div>
+        <div class="hs-empty" id="hs-empty">
+          <span>🚗</span>
+          <p>Agrega imágenes o un video<br>desde el panel admin</p>
         </div>
-        <div class="hero-card c2">
-          <div class="card-inner">
-            <div>
-              <div class="card-tag">🎵 Audio & Video</div>
-              <div class="card-title">USB · HD ·4K</div>
-            </div>
-            <div class="card-line"></div>
-          </div>
-        </div>
-        <div class="hero-card c3">
-          <div class="card-inner">
-            <div>
-              <div class="card-tag">🤖 IA & Web</div>
-              <div class="card-title">Chatbots · Páginas</div>
-            </div>
-            <div class="card-line"></div>
-          </div>
-        </div>
+        <button class="hs-arrow hs-prev" onclick="sliderMove(-1)">&#8249;</button>
+        <button class="hs-arrow hs-next" onclick="sliderMove(1)">&#8250;</button>
+        <div class="hs-dots" id="hs-dots"></div>
       </div>
     </div>
   </div>
@@ -1369,6 +1400,10 @@ function toggleMenu() {
 }
 
 // ── HERO LOADER ──
+let sliderIndex = 0;
+let sliderItems = [];
+let sliderAuto;
+
 (function loadHero(){
   try {
     const h = localStorage.getItem('tc_hero');
@@ -1387,8 +1422,59 @@ function toggleMenu() {
     if (d.s2l) document.getElementById('h-s2l').textContent = d.s2l;
     if (d.s3n) document.getElementById('h-s3n').textContent = d.s3n;
     if (d.s3l) document.getElementById('h-s3l').textContent = d.s3l;
+    // Logo
+    if (d.logoSrc) {
+      const img = document.getElementById('nav-logo-img');
+      const txt = document.getElementById('nav-logo-text');
+      img.src = d.logoSrc; img.style.display = 'block';
+      txt.style.display = 'none';
+    }
+    // Slider
+    if (d.sliderType === 'video' && d.sliderVideo) {
+      buildSliderVideo(d.sliderVideo);
+    } else if (d.sliderImages && d.sliderImages.length > 0) {
+      buildSliderImages(d.sliderImages);
+    }
   } catch(e){}
 })();
+
+function buildSliderImages(imgs) {
+  const track = document.getElementById('hs-track');
+  const empty = document.getElementById('hs-empty');
+  const dots = document.getElementById('hs-dots');
+  empty.style.display = 'none';
+  sliderItems = imgs;
+  track.innerHTML = imgs.map(src => `<img class="hs-slide" src="${src}" alt="slide">`).join('');
+  dots.innerHTML = imgs.map((_,i) => `<button class="hs-dot${i===0?' active':''}" onclick="sliderGo(${i})"></button>`).join('');
+  sliderIndex = 0;
+  if (imgs.length > 1) sliderAuto = setInterval(() => sliderMove(1), 4000);
+}
+
+function buildSliderVideo(url) {
+  const track = document.getElementById('hs-track');
+  const empty = document.getElementById('hs-empty');
+  const dots = document.getElementById('hs-dots');
+  const arrows = document.querySelectorAll('.hs-arrow');
+  empty.style.display = 'none';
+  dots.style.display = 'none';
+  arrows.forEach(a => a.style.display = 'none');
+  const vid = url.match(/(?:youtu\.be\/|v=|shorts\/)([A-Za-z0-9_-]{11})/);
+  const id = vid ? vid[1] : '';
+  track.innerHTML = `<iframe class="hs-slide-video" src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+}
+
+function sliderGo(i) {
+  sliderIndex = i;
+  document.getElementById('hs-track').style.transform = `translateX(-${i*100}%)`;
+  document.querySelectorAll('.hs-dot').forEach((d,j) => d.classList.toggle('active', j===i));
+}
+
+function sliderMove(dir) {
+  const n = sliderItems.length;
+  if (!n) return;
+  sliderIndex = (sliderIndex + dir + n) % n;
+  sliderGo(sliderIndex);
+}
 
 // ── NAV SCROLL ──
 window.addEventListener('scroll', () => {

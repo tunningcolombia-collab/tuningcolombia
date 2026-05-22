@@ -263,6 +263,56 @@ input:checked+.slider::before{transform:translateX(22px);background:#fff;}
         <button class="hbtn logout" onclick="doLogout()">⏻ Salir</button>
       </div>
     </div>
+    <!-- LOGO -->
+    <div class="sec-title">Logo del sitio (nav superior)</div>
+    <div class="form-group">
+      <label>Subir logo imagen</label>
+      <div class="upload-zone" id="logo-zone">
+        <input type="file" id="logo-file" accept="image/*" onchange="onLogoFile(this)">
+        <span class="uz-icon">🏷️</span>
+        <div class="uz-label">Arrastra o toca para subir logo</div>
+        <div class="uz-sub">PNG con fondo transparente recomendado — máx 200px alto</div>
+        <div class="uz-preview" id="logo-preview"><img id="logo-prev-el" src="" alt=""><div class="uz-name" id="logo-prev-name"></div></div>
+      </div>
+      <div style="margin-top:0.6rem;">
+        <label>O pega URL del logo</label>
+        <input type="text" id="logo-url" placeholder="https://tuningcolombia.com/img/logo.png" oninput="onLogoUrl()">
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- SLIDER -->
+    <div class="sec-title">Visual del Hero — Slider o Video</div>
+    <div class="vtabs">
+      <div class="vtab active" id="sl-tab-img" onclick="setSliderType('images')">🖼️ Imágenes</div>
+      <div class="vtab" id="sl-tab-vid" onclick="setSliderType('video')">▶ Video YouTube</div>
+    </div>
+
+    <!-- SLIDER IMÁGENES -->
+    <div id="sl-sec-images">
+      <div class="form-group">
+        <label>Subir imágenes (puedes subir varias)</label>
+        <div class="upload-zone" id="slider-zone">
+          <input type="file" id="slider-files" accept="image/*" multiple onchange="onSliderFiles(this)">
+          <span class="uz-icon">🚗</span>
+          <div class="uz-label">Arrastra o toca — selecciona varias a la vez</div>
+          <div class="uz-sub">JPG, PNG, WEBP — Recomendado 16:10</div>
+        </div>
+        <div id="slider-thumbs" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;"></div>
+      </div>
+    </div>
+
+    <!-- SLIDER VIDEO -->
+    <div id="sl-sec-video" style="display:none;">
+      <div class="form-group">
+        <label>URL de YouTube</label>
+        <input type="text" id="sl-video-url" placeholder="https://youtu.be/...">
+        <div class="input-hint">El video se reproduce automático, sin sonido, en loop</div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
     <div class="sec-title">Badge / Etiqueta superior</div>
     <div class="form-group"><label>Texto del badge</label><input type="text" id="h-badge" value="🇨🇴 Tuning Colombia — Est. 2010" oninput="heroPreview()"></div>
     <div class="sdiv"></div>
@@ -532,6 +582,43 @@ function heroPreview(){
 }
 
 // ── SAVE HERO ──
+let logoData = '';
+let sliderImagesData = [];
+let sliderTypeVal = 'images';
+
+function onLogoFile(inp){
+  const f=inp.files[0]; if(!f) return;
+  const r=new FileReader(); r.onload=e=>{
+    logoData=e.target.result;
+    document.getElementById('logo-prev-el').src=logoData;
+    document.getElementById('logo-prev-name').textContent='✓ '+f.name;
+    document.getElementById('logo-preview').style.display='block';
+  }; r.readAsDataURL(f);
+}
+function onLogoUrl(){ logoData=document.getElementById('logo-url').value; }
+
+function setSliderType(type){
+  sliderTypeVal=type;
+  document.getElementById('sl-tab-img').classList.toggle('active',type==='images');
+  document.getElementById('sl-tab-vid').classList.toggle('active',type==='video');
+  document.getElementById('sl-sec-images').style.display=type==='images'?'block':'none';
+  document.getElementById('sl-sec-video').style.display=type==='video'?'block':'none';
+}
+
+function onSliderFiles(inp){
+  const files=Array.from(inp.files); if(!files.length) return;
+  const thumbs=document.getElementById('slider-thumbs');
+  files.forEach(f=>{
+    const r=new FileReader(); r.onload=e=>{
+      sliderImagesData.push(e.target.result);
+      const img=document.createElement('img');
+      img.src=e.target.result;
+      img.style.cssText='width:60px;height:45px;object-fit:cover;border-radius:6px;border:1px solid rgba(232,0,154,0.4);';
+      thumbs.appendChild(img);
+    }; r.readAsDataURL(f);
+  });
+}
+
 function saveHero(){
   const t2 = document.getElementById('h-t2').value;
   const t2html = t2.replace(/\*(.*?)\*/g, '<em>$1</em>');
@@ -552,6 +639,10 @@ function saveHero(){
     s2l: document.getElementById('h-s2l').value,
     s3n: document.getElementById('h-s3n').value,
     s3l: document.getElementById('h-s3l').value,
+    logoSrc: logoData,
+    sliderType: sliderTypeVal,
+    sliderImages: sliderImagesData,
+    sliderVideo: document.getElementById('sl-video-url').value,
   };
   localStorage.setItem('tc_hero', JSON.stringify(data));
   showMsg('hero-msg','✓ Hero guardado — recarga el sitio para verlo','var(--green)');
@@ -582,6 +673,13 @@ function loadHeroAdmin(){
       if(parts[1]) document.getElementById('h-t2').value = parts[1];
       if(parts[2]) document.getElementById('h-t3').value = parts[2];
     }
+    if(d.logoSrc){ logoData=d.logoSrc; document.getElementById('logo-prev-el').src=d.logoSrc; document.getElementById('logo-prev-name').textContent='✓ logo guardado'; document.getElementById('logo-preview').style.display='block'; }
+    if(d.sliderImages && d.sliderImages.length){
+      sliderImagesData=d.sliderImages;
+      const thumbs=document.getElementById('slider-thumbs');
+      d.sliderImages.forEach(src=>{ const img=document.createElement('img'); img.src=src; img.style.cssText='width:60px;height:45px;object-fit:cover;border-radius:6px;border:1px solid rgba(232,0,154,0.4);'; thumbs.appendChild(img); });
+    }
+    if(d.sliderType==='video'){ setSliderType('video'); if(d.sliderVideo) document.getElementById('sl-video-url').value=d.sliderVideo; }
   }catch(e){}
 }
 
